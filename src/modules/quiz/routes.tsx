@@ -1,14 +1,13 @@
 import Layout from '@/shared/layouts/layout';
-import Home from './pages/home';
+import Quiz from './pages/quiz';
 
-export const homeRoutes = [
+export const quizRoutes = [
   {
-    path: '/',
     element: <Layout />,
     children: [
       {
-        path: '/',
-        element: <Home />,
+        path: '/quiz',
+        element: <Quiz />,
       },
     ],
   },
