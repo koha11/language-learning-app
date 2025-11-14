@@ -69,9 +69,9 @@ const CollectionList = ({ collections, onEdit, onDelete }: CollectionListProps) 
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {collections.map((collection) => (
-          <Card key={collection.id} className="p-6 space-y-4 hover:shadow-lg transition-shadow">
+          <Card key={collection.id} className="p-6  space-y-2 hover:shadow-lg transition-shadow">
             <div className="space-y-2">
               <div className="flex items-start justify-between">
                 <h3 className="text-xl font-bold text-foreground">{collection.name}</h3>
@@ -80,15 +80,21 @@ const CollectionList = ({ collections, onEdit, onDelete }: CollectionListProps) 
                   <span className="text-muted-foreground">{getStatusText(collection.status)}</span>
                 </div>
               </div>
-              <p className="text-muted-foreground text-sm">{collection.description}</p>
+              <p className="text-muted-foreground text-sm line-clamp-2 break-all min-h-[40px]">
+                {collection.description ? collection.description : 'No description'}
+              </p>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {collection.tags.map((tag) => (
-                <span key={tag} className="px-2 py-1 bg-primary/10 text-primary rounded text-xs">
-                  {tag}
-                </span>
-              ))}
+              {collection.tags.length > 0 ? (
+                collection.tags.map((tag) => (
+                  <span key={tag} className="px-2 py-1 bg-primary/10 text-primary rounded text-xs">
+                    {tag}
+                  </span>
+                ))
+              ) : (
+                <span className="text-xs">No tags</span>
+              )}
             </div>
 
             <div className="pt-2 border-t border-border">
@@ -97,12 +103,12 @@ const CollectionList = ({ collections, onEdit, onDelete }: CollectionListProps) 
               </div>
             </div>
 
-            {collection.status === 'shared' && collection.sharedWith.length > 0 && (
+            {/* {collection.status === 'shared' && collection.sharedWith.length > 0 && (
               <div className="pt-2 text-sm">
                 <span className="text-muted-foreground">Shared with: </span>
                 <span className="text-foreground">{collection.sharedWith.join(', ')}</span>
               </div>
-            )}
+            )} */}
 
             <div className="flex gap-2 pt-2">
               <Button

@@ -1,29 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Trophy } from 'lucide-react';
+import { RotateCcw, Trophy, CheckIcon, XIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Flashcard } from '@/modules/flashcard/types/flashcard';
 import { useLocation } from 'react-router-dom';
 
 type Question = {
-  id: number;
-  term: string;
+  id: string;
+  question: string;
   options: string[];
   correctAnswer: number;
-  language: string;
 };
 
 const Quiz = () => {
   const location = useLocation();
-  const { flashcards } = location.state || {};
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [showResult, setShowResult] = useState(false);
-  const [score, setScore] = useState(0);
-  const [answers, setAnswers] = useState<{ questionId: number; correct: boolean }[]>([]);
+  const { flashcards }: { flashcards: Flashcard[] } = location.state || {};
+  const [currentQuestion, setCurrentQuestion] = React.useState(0);
+  const [selectedAnswer, setSelectedAnswer] = React.useState<number | null>(null);
+  const [showResult, setShowResult] = React.useState(false);
+  const [score, setScore] = React.useState(0);
+  const [answers, setAnswers] = React.useState<{ questionId: string; correct: boolean }[]>([]);
 
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = React.useState<Question[]>([]);
 
   const question = questions[currentQuestion];
   const isCorrect = selectedAnswer === question?.correctAnswer;
@@ -52,15 +51,11 @@ const Quiz = () => {
     });
   }
 
-  const handleAnswerSelect = (index: number) => {
+  const handleSubmit = (index: number) => {
     if (showResult) return;
     setSelectedAnswer(index);
-  };
 
-  const handleSubmit = () => {
-    if (selectedAnswer === null) return;
-
-    const correct = selectedAnswer === question.correctAnswer;
+    const correct = index === question.correctAnswer;
     setShowResult(true);
     if (correct) {
       setScore(score + 1);
@@ -68,7 +63,7 @@ const Quiz = () => {
     setAnswers([...answers, { questionId: question.id, correct }]);
     setTimeout(() => {
       handleNext();
-    }, 1000);
+    }, 1500);
   };
 
   const handleNext = () => {
@@ -100,6 +95,7 @@ const Quiz = () => {
       </div>
     );
   }
+
   if (isQuizComplete) {
     const percentage = Math.round((score / questions.length) * 100);
     return (
@@ -136,14 +132,14 @@ const Quiz = () => {
                         key={q.id}
                         className={cn(
                           'p-3 rounded-lg flex items-center justify-between',
-                          answer.correct ? 'bg-success/10' : 'bg-destructive/10',
+                          answer.correct ? 'bg-green-100' : 'bg-destructive/10',
                         )}
                       >
                         <span className="text-sm text-foreground">Question {index + 1}</span>
                         {answer.correct ? (
-                          <CheckCircle2 className="w-5 h-5 text-success" />
+                          <CheckIcon className="w-5 h-5 text-green-500" />
                         ) : (
-                          <XCircle className="w-5 h-5 text-destructive" />
+                          <XIcon className="w-5 h-5 text-destructive" />
                         )}
                       </div>
                     );
@@ -163,30 +159,26 @@ const Quiz = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto space-y-6">
-          <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-background ">
+      <div className="container mx-auto  px-4 py-8 mt-20">
+        <div className="max-w-5xl mx-auto ">
+          <div className="flex items-end justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-foreground">Quiz Time</h2>
-              <p className="text-muted-foreground">
+              <h2 className="text-3xl font-bold text-foreground">Quiz Time</h2>
+              <p className="text-muted-foreground mt-2 ">
                 Question {currentQuestion + 1} of {questions.length}
               </p>
             </div>
             <div className="flex gap-2">
-              <div className="px-4 py-2 rounded-full bg-primary/10 text-primary font-semibold">
-                {/* {question.language} */}
-              </div>
-              <div className="px-4 py-2 rounded-full bg-accent/10 text-accent font-semibold">
-                Score: {score}
-              </div>
+              <div className="px-4 py-2 rounded-full text-black font-semibold">Score: {score}</div>
             </div>
           </div>
 
-          <Card className="p-8 space-y-6">
-            <h3 className="text-2xl font-semibold text-foreground">{question.term}</h3>
+          <Card className="p-8 gap-0 mt-6">
+            <h3 className="text-2xl mb-6 font-semibold text-foreground">{question.question}</h3>
 
-            <div className="space-y-3">
+            <span className="text-sm">Choose your answer</span>
+            <div className=" grid grid-cols-2 gap-4 mt-3">
               {question.options.map((option, index) => {
                 const isSelected = selectedAnswer === index;
                 const isCorrectAnswer = index === question.correctAnswer;
@@ -196,80 +188,42 @@ const Quiz = () => {
                 return (
                   <button
                     key={index}
-                    onClick={() => handleAnswerSelect(index)}
+                    onClick={() => handleSubmit(index)}
                     disabled={showResult}
                     className={cn(
-                      'w-full p-4 text-left rounded-lg border-2 transition-all',
-                      'hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+                      'w-full p-4 text-left rounded-lg cursor-pointer border-2 transition-all',
+                      'hover:bg-gray-100 ',
                       'disabled:cursor-not-allowed',
                       isSelected && !showResult && 'border-primary bg-primary/5',
-                      showCorrectAnswer && 'border-success bg-success/5',
-                      showIncorrectAnswer && 'border-destructive bg-destructive/5',
+                      showCorrectAnswer && 'border-green-500 bg-green-100',
+                      showIncorrectAnswer && 'border-red-500 bg-destructive/5',
                       !isSelected && !showResult && 'border-border',
                     )}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-foreground">{option}</span>
-                      {showCorrectAnswer && <CheckCircle2 className="w-6 h-6 text-success" />}
-                      {showIncorrectAnswer && <XCircle className="w-6 h-6 text-destructive" />}
+                    <div className={`flex items-center justify-between `}>
+                      <div className="flex items-center gap-6">
+                        <span className="text-sm">{index + 1}</span>
+                        <span className="font-medium text-foreground">{option}</span>
+                      </div>
+                      {showCorrectAnswer && <CheckIcon className="w-6 h-6 text-green-500" />}
+                      {showIncorrectAnswer && <XIcon className="w-6 h-6 text-destructive" />}
                     </div>
                   </button>
                 );
               })}
             </div>
-
-            {!showResult ? (
-              <Button
-                onClick={handleSubmit}
-                disabled={selectedAnswer === null}
-                size="lg"
-                className="w-full"
-              >
-                Submit Answer
-              </Button>
-            ) : (
-              <div className="space-y-4">
+            <div className="flex gap-2 justify-center mt-10">
+              {questions.map((_, index) => (
                 <div
+                  key={index}
                   className={cn(
-                    'p-4 rounded-lg',
-                    isCorrect ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive',
+                    'h-2 w-2 rounded-full transition-all',
+                    index === currentQuestion ? 'bg-primary scale-125' : 'bg-gray-200',
                   )}
-                >
-                  <p className="font-semibold text-center">
-                    {isCorrect ? 'Correct! Well done! ✓' : 'Incorrect. Keep practicing!'}
-                  </p>
-                </div>
-                {currentQuestion < questions.length - 1 ? (
-                  <>
-                    {/* <Button onClick={handleNext} size="lg" className="w-full">
-                      Next Question
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button> */}
-                  </>
-                ) : (
-                  <Button onClick={handleNext} size="lg" className="w-full">
-                    View Results
-                    <Trophy className="w-5 h-5 ml-2" />
-                  </Button>
-                )}
-              </div>
-            )}
+                />
+              ))}
+            </div>
           </Card>
-
-          <div className="flex gap-2 justify-center">
-            {questions.map((_, index) => (
-              <div
-                key={index}
-                className={cn(
-                  'h-2 w-2 rounded-full transition-all',
-                  index === currentQuestion && 'bg-primary scale-125',
-                  index < currentQuestion &&
-                    (answers[index]?.correct ? 'bg-success' : 'bg-destructive'),
-                  index > currentQuestion && 'bg-border',
-                )}
-              />
-            ))}
-          </div>
         </div>
       </div>
     </div>

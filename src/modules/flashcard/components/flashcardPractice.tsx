@@ -39,26 +39,11 @@ const FlashcardPractice = ({ flashcards }: FlashcardPracticeProps) => {
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Practice Mode</h2>
-          <p className="text-muted-foreground">
-            Card {currentIndex + 1} of {flashcards.length}
-          </p>
-        </div>
-        {/* <div className="flex flex-col items-end gap-1">
-          <div className="px-4 py-2 rounded-full bg-primary/10 text-primary font-semibold text-sm">
-            {currentCard.language}
-          </div>
-          <div className="text-xs text-muted-foreground">{currentCard.category}</div>
-        </div> */}
-      </div>
-
       <div className="perspective-1000">
         <Card
           onClick={handleFlip}
           className={cn(
-            'relative h-80 cursor-pointer transition-all duration-500 transform-gpu',
+            'relative h-80 cursor-pointer transition-all ease-linear duration-300 transform-gpu',
             'hover:shadow-lg',
           )}
           style={{
@@ -97,10 +82,11 @@ const FlashcardPractice = ({ flashcards }: FlashcardPracticeProps) => {
           Previous
         </Button>
 
-        <Button variant="ghost" size="lg" onClick={handleFlip}>
-          <RotateCcw className="w-5 h-5 mr-2" />
-          Flip Card
-        </Button>
+        <div>
+          <p className="text-muted-foreground">
+            {currentIndex + 1} of {flashcards.length}
+          </p>
+        </div>
 
         <Button
           variant="outline"

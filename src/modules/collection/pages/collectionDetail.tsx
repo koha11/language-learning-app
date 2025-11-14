@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft, Plus, BookOpen, Play } from 'lucide-react';
+import { ArrowLeft, Plus, BookOpen, Play, ShareIcon } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Flashcard } from '@/modules/flashcard/types/flashcard';
 import FlashcardPractice from '@/modules/flashcard/components/flashcardPractice';
@@ -83,33 +83,6 @@ const CollectionDetail = () => {
     setEditingCard(null);
   };
 
-  // Quiz data
-  const quizQuestions = flashcards.map((card, index) => ({
-    id: `q${index + 1}`,
-    question: `What is the translation of "${card.term}"?`,
-    options: [
-      card.definition,
-      index > 0 ? flashcards[index - 1].definition : 'Salut',
-      index < flashcards.length - 1 ? flashcards[index + 1].definition : 'Bonsoir',
-      'Je ne sais pas',
-    ].sort(() => Math.random() - 0.5),
-    correctAnswer: card.definition,
-  }));
-
-  if (isPracticeMode) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
-          <Button variant="ghost" onClick={() => setIsPracticeMode(false)} className="mb-6">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Collection
-          </Button>
-          <FlashcardPractice flashcards={flashcards} />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -136,42 +109,24 @@ const CollectionDetail = () => {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button
-                  onClick={() => setIsPracticeMode(true)}
-                  variant="outline"
-                  size="lg"
-                  disabled={flashcards.length === 0}
-                >
-                  <BookOpen className="w-5 h-5 mr-2" />
-                  Practice
-                </Button>
+                <Link to={`/collections/${id}/quiz`} state={{ flashcards: flashcards }}>
+                  <Button size="lg">
+                    <Play className="w-5 h-5 mr-2" />
+                    Start Quiz
+                  </Button>
+                </Link>
                 <Button onClick={() => setIsFormOpen(true)} size="lg">
                   <Plus className="w-5 h-5 mr-2" />
                   Add Card
+                </Button>
+                <Button variant="outline" size="lg">
+                  <ShareIcon className="w-5 h-5" />
                 </Button>
               </div>
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Card className="p-6">
-              <div className="text-sm text-muted-foreground mb-1">Total Cards</div>
-              <div className="text-3xl font-bold text-foreground">{flashcards.length}</div>
-            </Card>
-            {/* <Card className="p-6">
-              <div className="text-sm text-muted-foreground mb-1">Languages</div>
-              <div className="text-3xl font-bold text-primary">
-                {new Set(flashcards.map((c) => c.language)).size}
-              </div>
-            </Card> */}
-            {/* <Card className="p-6">
-              <div className="text-sm text-muted-foreground mb-1">Categories</div>
-              <div className="text-3xl font-bold text-accent">
-                {new Set(flashcards.map((c) => c.category)).size}
-              </div>
-            </Card> */}
-          </div>
+          <FlashcardPractice flashcards={flashcards} />
 
           {/* Form */}
           {isFormOpen && (
@@ -184,49 +139,11 @@ const CollectionDetail = () => {
               />
             </Card>
           )}
-
-          {/* Tabs */}
-          <Tabs defaultValue="flashcards" className="space-y-6">
-            <TabsList className="grid w-full max-w-md grid-cols-2">
-              <TabsTrigger value="flashcards">Flashcards</TabsTrigger>
-              <TabsTrigger value="quiz">Quiz</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="flashcards" className="space-y-4">
-              <FlashcardList
-                flashcards={flashcards}
-                onEdit={handleEditClick}
-                onDelete={handleDeleteCard}
-              />
-            </TabsContent>
-
-            <TabsContent value="quiz" className="space-y-4">
-              {flashcards.length === 0 ? (
-                <Card className="p-12 text-center">
-                  <p className="text-muted-foreground">
-                    Add some flashcards to start taking quizzes!
-                  </p>
-                </Card>
-              ) : (
-                <Card className="p-12 text-center space-y-6">
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground mb-2">
-                      Ready to Test Your Knowledge?
-                    </h2>
-                    <p className="text-muted-foreground">
-                      {quizQuestions.length} questions waiting for you
-                    </p>
-                  </div>
-                  <Link to={`/collections/${id}/quiz`} state={{ flashcards: flashcards }}>
-                    <Button size="lg">
-                      <Play className="w-5 h-5 mr-2" />
-                      Start Quiz
-                    </Button>
-                  </Link>
-                </Card>
-              )}
-            </TabsContent>
-          </Tabs>
+          <FlashcardList
+            flashcards={flashcards}
+            onEdit={handleEditClick}
+            onDelete={handleDeleteCard}
+          />
         </div>
       </div>
     </div>

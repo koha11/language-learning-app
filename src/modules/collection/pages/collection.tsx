@@ -5,6 +5,13 @@ import { Card } from '@/components/ui/card';
 import type { Collection } from '../types/collection';
 import CollectionForm from '../components/collectionForm';
 import CollectionList from '../components/collectionList';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const Collections = () => {
   const [collections, setCollections] = useState<Collection[]>([
@@ -104,7 +111,7 @@ const Collections = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-8">
+        <div className=" mx-auto space-y-8">
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -148,17 +155,29 @@ const Collections = () => {
             </Card>
           </div>
 
-          {/* Form */}
-          {isFormOpen && (
-            <Card className="p-6">
-              <CollectionForm
-                onSubmit={editingCollection ? handleEditCollection : handleAddCollection}
-                onCancel={handleCloseForm}
-                initialData={editingCollection || undefined}
-                isEditing={!!editingCollection}
-              />
-            </Card>
-          )}
+          {/* Dialog Form */}
+          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+            <DialogContent className="lg:min-w-[800px] md:min-w-[600px] w-[90%] pl-6 pr-2">
+              <DialogHeader>
+                <DialogTitle>
+                  {editingCollection ? 'Edit Collection' : 'New Collection'}
+                </DialogTitle>
+                <DialogDescription>
+                  {editingCollection
+                    ? 'Update your collection details.'
+                    : 'Create a new flashcard collection.'}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="max-h-[80vh] overflow-y-auto pr-4 ">
+                <CollectionForm
+                  onSubmit={editingCollection ? handleEditCollection : handleAddCollection}
+                  onCancel={handleCloseForm}
+                  initialData={editingCollection || undefined}
+                  isEditing={!!editingCollection}
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
 
           {/* List */}
           <CollectionList

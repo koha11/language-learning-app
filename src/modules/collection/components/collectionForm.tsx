@@ -182,7 +182,7 @@ const CollectionForm = ({ onSubmit, onCancel, initialData, isEditing }: Collecti
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="name">Collection Name *</Label>
-          <Input id="name" {...register('name')} placeholder="e.g., French Basics" />
+          <Input id="name" {...register('name')} placeholder="Enter collection name" />
           {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
         </div>
 
@@ -238,7 +238,7 @@ const CollectionForm = ({ onSubmit, onCancel, initialData, isEditing }: Collecti
             defaultValue={initialData?.status || 'private'}
             onValueChange={(value) => setValue('status', value as 'private' | 'public' | 'shared')}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent>
@@ -269,7 +269,7 @@ const CollectionForm = ({ onSubmit, onCancel, initialData, isEditing }: Collecti
               {sharedWith.map((email) => (
                 <span
                   key={email}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-accent/10 text-accent rounded-full text-sm"
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-black rounded-full text-sm"
                 >
                   {email}
                   <button
@@ -290,46 +290,46 @@ const CollectionForm = ({ onSubmit, onCancel, initialData, isEditing }: Collecti
           <Tabs defaultValue="manual" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="manual">Manual Entry</TabsTrigger>
-              <TabsTrigger value="bulk">Bulk Import</TabsTrigger>
+              <TabsTrigger value="bulk">Import</TabsTrigger>
             </TabsList>
 
             <TabsContent value="manual" className="space-y-4">
-              <div className="grid gap-4">
-                <div className="space-y-2">
+              <div className="flex items-center gap-4 mt-2">
+                <div className="space-y-2 w-full">
                   <Label htmlFor="term">Term</Label>
                   <Input
                     id="term"
                     value={termInput}
                     onChange={(e) => setTermInput(e.target.value)}
-                    placeholder="e.g., hello"
+                    placeholder="Enter term"
                     onKeyPress={(e) =>
                       e.key === 'Enter' &&
                       (e.preventDefault(), document.getElementById('definition')?.focus())
                     }
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 w-full">
                   <Label htmlFor="definition">Definition</Label>
                   <Input
                     id="definition"
                     value={definitionInput}
                     onChange={(e) => setDefinitionInput(e.target.value)}
-                    placeholder="e.g., xin chào"
+                    placeholder="Enter definition"
                     onKeyPress={(e) =>
                       e.key === 'Enter' && (e.preventDefault(), handleAddFlashcard())
                     }
                   />
                 </div>
-                <Button
-                  type="button"
-                  onClick={handleAddFlashcard}
-                  variant="secondary"
-                  className="w-full"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Flashcard
-                </Button>
               </div>
+              <Button
+                type="button"
+                onClick={handleAddFlashcard}
+                variant="secondary"
+                className="w-full"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Flashcard
+              </Button>
             </TabsContent>
 
             <TabsContent value="bulk" className="space-y-4">

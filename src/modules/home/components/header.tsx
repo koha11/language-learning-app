@@ -1,10 +1,15 @@
-import { BookOpen, Trophy } from 'lucide-react';
+import { BookOpen, SearchIcon, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
 
 const Header = () => {
   const location = useLocation();
+  const fakeUser = {
+    id: 1,
+    name: 'Kzzz',
+  };
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -20,7 +25,7 @@ const Header = () => {
           <span className="text-xl font-bold text-foreground">LinguaLearn</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6">
+        {/* <nav className="hidden md:flex items-center gap-6">
           <Link
             to="/collections"
             className={cn(
@@ -31,15 +36,6 @@ const Header = () => {
             Collections
           </Link>
           <Link
-            to="/quiz"
-            className={cn(
-              'text-foreground hover:text-primary transition-colors font-medium',
-              isActive('/quiz') && 'text-primary',
-            )}
-          >
-            Quiz
-          </Link>
-          <Link
             to="/progress"
             className={cn(
               'text-foreground hover:text-primary transition-colors font-medium',
@@ -48,16 +44,17 @@ const Header = () => {
           >
             Progress
           </Link>
-        </nav>
+        </nav> */}
+        <div className="relative w-[50%]">
+          <SearchIcon className=" absolute left-3 size-4 opacity-60 top-1/2 -translate-y-1/2" />
+          <Input className=" rounded-full w-full pl-9 bg-gray-100" />
+        </div>
 
         <div className="flex items-center gap-2">
-          <Link to="/progress">
-            <Button variant="ghost" size="icon">
-              <Trophy className="w-5 h-5" />
+          <Link to="/login">
+            <Button className=" rounded-full bg-blue-500 hover:bg-blue-500 cursor-pointer">
+              Login
             </Button>
-          </Link>
-          <Link to="/flashcard">
-            <Button>Get Started</Button>
           </Link>
         </div>
       </div>
