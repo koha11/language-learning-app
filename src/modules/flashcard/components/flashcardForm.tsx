@@ -19,47 +19,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/shared/hooks/useToast';
-
-const flashcardSchema = z.object({
-  term: z
-    .string()
-    .trim()
-    .min(1, { message: 'term text is required' })
-    .max(200, { message: 'term text must be less than 200 characters' }),
-  definition: z
-    .string()
-    .trim()
-    .min(1, { message: 'Back text is required' })
-    .max(200, { message: 'Back text must be less than 200 characters' }),
-  // language: z.string().min(1, { message: 'Please select a language' }),
-  // category: z
-  //   .string()
-  //   .trim()
-  //   .min(1, { message: 'Category is required' })
-  //   .max(50, { message: 'Category must be less than 50 characters' }),
-});
-
-type FlashcardFormData = z.infer<typeof flashcardSchema>;
+import type { FlashcardType } from '../types/flashcard';
+import { FlashcardSchema } from '../schemas/flashcard.schema';
 
 type FlashcardFormProps = {
-  onSubmit: (data: FlashcardFormData) => void;
+  onSubmit: (data: FlashcardType) => void;
   onCancel: () => void;
-  initialData?: Partial<FlashcardFormData>;
+  initialData?: Partial<FlashcardType>;
   isEditing?: boolean;
 };
-
-const languages = [
-  'French',
-  'Spanish',
-  'German',
-  'Italian',
-  'Portuguese',
-  'Japanese',
-  'Chinese',
-  'Korean',
-  'Arabic',
-  'Russian',
-];
 
 const FlashcardForm = ({
   onSubmit,
@@ -69,8 +37,8 @@ const FlashcardForm = ({
 }: FlashcardFormProps) => {
   const { toast } = useToast();
 
-  const form = useForm<FlashcardFormData>({
-    resolver: zodResolver(flashcardSchema),
+  const form = useForm<FlashcardType>({
+    resolver: zodResolver(FlashcardSchema),
     defaultValues: {
       term: initialData?.term || '',
       definition: initialData?.definition || '',
@@ -79,7 +47,7 @@ const FlashcardForm = ({
     },
   });
 
-  const handleSubmit = (data: FlashcardFormData) => {
+  const handleSubmit = (data: FlashcardType) => {
     onSubmit(data);
     toast('Flashcard updated!');
   };

@@ -3,9 +3,9 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { Flashcard } from '../types/flashcard';
+import type { FlashcardType } from '../types/flashcard';
 type FlashcardPracticeProps = {
-  flashcards: Flashcard[];
+  flashcards: FlashcardType[];
 };
 
 const FlashcardPractice = ({ flashcards }: FlashcardPracticeProps) => {

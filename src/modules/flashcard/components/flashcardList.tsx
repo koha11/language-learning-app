@@ -13,11 +13,11 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Edit, Trash2, Languages } from 'lucide-react';
 import { useToast } from '@/shared/hooks/useToast';
-import type { Flashcard } from '../types/flashcard';
+import type { FlashcardType } from '../types/flashcard';
 
 type FlashcardListProps = {
-  flashcards: Flashcard[];
-  onEdit: (card: Flashcard) => void;
+  flashcards: FlashcardType[];
+  onEdit: (card: FlashcardType) => void;
   onDelete: (id: string) => void;
 };
 
