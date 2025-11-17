@@ -13,14 +13,14 @@ import { useToast } from '@/shared/hooks/useToast';
 import { Upload, XIcon } from 'lucide-react';
 import React, { useCallback } from 'react';
 import type { UseFormSetValue } from 'react-hook-form';
-import type { CollectionType } from '../types/collection';
+import type { CollectionDetailType } from '../types/collection';
 import type { FlashcardType } from '@/modules/flashcard/types/flashcard';
 
 type Props = {
   open: boolean;
   onChange: () => void;
   value: FlashcardType[];
-  setValue: UseFormSetValue<CollectionType>;
+  setValue: UseFormSetValue<CollectionDetailType>;
 };
 
 const data = [

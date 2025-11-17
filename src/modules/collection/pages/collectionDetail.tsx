@@ -8,69 +8,35 @@ import type { Flashcard } from '@/modules/flashcard/types/flashcard';
 import FlashcardPractice from '@/modules/flashcard/components/flashcardPractice';
 import FlashcardForm from '@/modules/flashcard/components/flashcardForm';
 import FlashcardList from '@/modules/flashcard/components/flashcardList';
+import { useGetCollectionById } from '../hooks/collection.hooks';
 
 const CollectionDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Demo collection data
-  const collection = {
-    id: id,
-    name: 'French Basics',
-    description: 'Essential French phrases for beginners',
-    tags: ['French', 'Beginner', 'Greetings'],
-    status: 'public' as const,
-    owner: 'You',
-    sharedWith: [],
-  };
-
-  const [flashcards, setFlashcards] = useState<Flashcard[]>([
-    {
-      id: '1',
-      term: 'Hello',
-      definition: 'Bonjour',
-    },
-    {
-      id: '2',
-      term: 'Thank you',
-      definition: 'Merci',
-    },
-    {
-      id: '3',
-      term: 'Good morning',
-      definition: 'Bonjour',
-    },
-    {
-      id: '4',
-      term: 'Goodbye',
-      definition: 'Au revoir',
-    },
-  ]);
-
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
-  const [isPracticeMode, setIsPracticeMode] = useState(false);
 
+  const { data, isLoading, isError } = useGetCollectionById(id!);
   const handleAddCard = (card: Omit<Flashcard, 'id' | 'createdAt'>) => {
     const newCard: Flashcard = {
       ...card,
       id: Date.now().toString(),
-      // createdAt: new Date(),
     };
-    setFlashcards([...flashcards, newCard]);
+    // setFlashcards([...flashcards, newCard]);
     setIsFormOpen(false);
   };
 
   const handleEditCard = (card: Omit<Flashcard, 'id' | 'createdAt'>) => {
     if (editingCard) {
-      setFlashcards(flashcards.map((c) => (c.id === editingCard.id ? { ...c, ...card } : c)));
+      // setFlashcards(flashcards.map((c) => (c.id === editingCard.id ? { ...c, ...card } : c)));
       setEditingCard(null);
       setIsFormOpen(false);
     }
   };
 
   const handleDeleteCard = (id: string) => {
-    setFlashcards(flashcards.filter((c) => c.id !== id));
+    // setFlashcards(flashcards.filter((c) => c.id !== id));
   };
 
   const handleEditClick = (card: Flashcard) => {
@@ -82,7 +48,9 @@ const CollectionDetail = () => {
     setIsFormOpen(false);
     setEditingCard(null);
   };
-
+  if (isLoading) {
+    return <span>Loading...</span>;
+  }
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -95,21 +63,25 @@ const CollectionDetail = () => {
             </Button>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-foreground">{collection.name}</h1>
-                <p className="text-muted-foreground mt-1">{collection.description}</p>
+                <h1 className="text-3xl font-bold text-foreground">{data?.name}</h1>
+                <p className="text-muted-foreground mt-1">{data?.description}</p>
                 <div className="flex flex-wrap gap-2 mt-3">
-                  {collection.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                  {data?.tags ? (
+                    data.tags.split(' ').map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+                      >
+                        {tag}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-xs">No tags</span>
+                  )}
                 </div>
               </div>
               <div className="flex gap-2">
-                <Link to={`/collections/${id}/quiz`} state={{ flashcards: flashcards }}>
+                <Link to={`/collections/${id}/quiz`} state={{ flashcards: data?.flashcards }}>
                   <Button size="lg">
                     <Play className="w-5 h-5 mr-2" />
                     Start Quiz
@@ -126,7 +98,7 @@ const CollectionDetail = () => {
             </div>
           </div>
 
-          <FlashcardPractice flashcards={flashcards} />
+          <FlashcardPractice flashcards={data?.flashcards ?? []} />
 
           {/* Form */}
           {isFormOpen && (
@@ -140,7 +112,7 @@ const CollectionDetail = () => {
             </Card>
           )}
           <FlashcardList
-            flashcards={flashcards}
+            flashcards={data?.flashcards ?? []}
             onEdit={handleEditClick}
             onDelete={handleDeleteCard}
           />

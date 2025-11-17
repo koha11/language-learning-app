@@ -34,22 +34,22 @@ const CollectionList = ({ collections, onDelete }: CollectionListProps) => {
     }
   };
 
-  const getStatusIcon = (status: CollectionType['status']) => {
+  const getStatusIcon = (status: CollectionType['access_level']) => {
     switch (status) {
       case 'public':
         return <Globe className="w-4 h-4 text-primary" />;
-      case 'shared':
+      case 'restrict':
         return <Users className="w-4 h-4 text-accent" />;
       case 'private':
         return <Lock className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
-  const getStatusText = (status: CollectionType['status']) => {
+  const getStatusText = (status: CollectionType['access_level']) => {
     switch (status) {
       case 'public':
         return 'Public';
-      case 'shared':
+      case 'restrict':
         return 'Shared';
       case 'private':
         return 'Private';
@@ -75,8 +75,10 @@ const CollectionList = ({ collections, onDelete }: CollectionListProps) => {
               <div className="flex items-start justify-between">
                 <h3 className="text-xl font-bold text-foreground">{collection.name}</h3>
                 <div className="flex items-center gap-1 text-sm">
-                  {getStatusIcon(collection.status)}
-                  <span className="text-muted-foreground">{getStatusText(collection.status)}</span>
+                  {getStatusIcon(collection.access_level)}
+                  <span className="text-muted-foreground">
+                    {getStatusText(collection.access_level)}
+                  </span>
                 </div>
               </div>
               <p className="text-muted-foreground text-sm line-clamp-2 break-all min-h-[40px]">
@@ -85,8 +87,8 @@ const CollectionList = ({ collections, onDelete }: CollectionListProps) => {
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {collection.tags.length > 0 ? (
-                collection.tags.map((tag) => (
+              {collection?.tags ? (
+                collection.tags.split(' ').map((tag) => (
                   <span key={tag} className="px-2 py-1 bg-primary/10 text-primary rounded text-xs">
                     {tag}
                   </span>
@@ -98,7 +100,7 @@ const CollectionList = ({ collections, onDelete }: CollectionListProps) => {
 
             <div className="pt-2 border-t border-border">
               <div className="text-sm text-muted-foreground">
-                {collection.flashcards.length} flashcards
+                {collection.flashcards_count} flashcards
               </div>
             </div>
 

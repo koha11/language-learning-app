@@ -15,13 +15,13 @@ import {
 import { X, Plus, XIcon, UploadIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import ImportFlashcardModal from './importFlashcardModal';
-import { collectionSchema } from '../schemas/collection.schema';
-import type { CollectionType } from '../types/collection';
+import { collectionDetailSchema } from '../schemas/collection.schema';
+import type { CollectionDetailType } from '../types/collection';
 import ExtractParagraphModal from './extractParagraphModal';
 
 type CollectionFormProps = {
-  onSubmit: (data: CollectionType) => void;
-  initialData?: CollectionType;
+  onSubmit: (data: CollectionDetailType) => void;
+  initialData?: CollectionDetailType;
   isEditing?: boolean;
 };
 
@@ -33,17 +33,17 @@ const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProp
   const [sharedWith, setSharedWith] = useState<string[]>(initialData?.sharedWith || []);
   const [emailInput, setEmailInput] = useState('');
 
-  const form = useForm<CollectionType>({
-    resolver: zodResolver(collectionSchema),
+  const form = useForm<CollectionDetailType>({
+    resolver: zodResolver(collectionDetailSchema),
     defaultValues: {
       name: initialData?.name || '',
       description: initialData?.description || '',
-      tags: initialData?.tags || [],
-      status: initialData?.status || 'private',
+      tags: initialData?.tags,
+      access_level: initialData?.access_level || 'private',
       sharedWith: initialData?.sharedWith || [],
       flashcards: initialData?.flashcards || [
         {
-          id: Date.now.toString(),
+          id: Math.random(),
           term: '',
           definition: '',
         },
@@ -71,7 +71,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProp
         name: initialData.name,
         description: initialData.description,
         tags: initialData.tags,
-        status: initialData.status,
+        access_level: initialData.access_level,
         sharedWith: initialData.sharedWith,
         flashcards: initialData.flashcards,
       });
@@ -81,7 +81,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProp
     }
   }, [initialData, form, reset, append]);
 
-  const status = watch('status');
+  const access_level = watch('access_level');
 
   const handleAddTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -113,7 +113,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProp
     setValue('sharedWith', newEmails);
   };
 
-  const onFormSubmit = (data: CollectionType) => {
+  const onFormSubmit = (data: CollectionDetailType) => {
     onSubmit(data);
   };
 
@@ -168,7 +168,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProp
               </Button>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
-              {tags.map((tag) => (
+              {/* {tags.map((tag) => (
                 <span
                   key={tag}
                   className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
@@ -182,16 +182,16 @@ const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProp
                     <X className="w-3 h-3" />
                   </button>
                 </span>
-              ))}
+              ))} */}
             </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="status">Status *</Label>
             <Select
-              defaultValue={initialData?.status || 'private'}
+              defaultValue={initialData?.access_level || 'private'}
               onValueChange={(value) =>
-                setValue('status', value as 'private' | 'public' | 'shared')
+                setValue('access_level', value as 'private' | 'public' | 'restrict')
               }
             >
               <SelectTrigger className="w-full py-5">
@@ -205,7 +205,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProp
             </Select>
           </div>
 
-          {status === 'shared' && (
+          {access_level === 'restrict' && (
             <div className="space-y-2">
               <Label htmlFor="sharedWith">Share with (emails)</Label>
               <div className="flex gap-2">
@@ -306,7 +306,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProp
             type="button"
             onClick={() =>
               append({
-                id: Date.now().toString(),
+                id: Math.random(),
                 term: '',
                 definition: '',
               })

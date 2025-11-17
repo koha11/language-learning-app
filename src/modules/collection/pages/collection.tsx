@@ -2,70 +2,17 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, FolderOpen } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import type { Collection } from '../types/collection';
+import type { CollectionType } from '../types/collection';
 import CollectionList from '../components/collectionList';
 import { Link } from 'react-router-dom';
+import { useGetCollections } from '../hooks/collection.hooks';
 
 const Collections = () => {
-  const [collections, setCollections] = useState<Collection[]>([
-    {
-      id: '1',
-      name: 'French Basics',
-      description: 'Essential French phrases for beginners',
-      tags: ['French', 'Beginner', 'Greetings'],
-      status: 'public',
-      owner: 'You',
-      sharedWith: [],
-      flashcards: [
-        { id: '1', term: 'Bonjour', definition: 'Hello' },
-        { id: '2', term: 'Au revoir', definition: 'Goodbye' },
-        { id: '3', term: 'Merci', definition: 'Thank you' },
-        { id: '4', term: "S'il vous plaît", definition: 'Please' },
-      ],
-      createdAt: new Date(),
-    },
-    {
-      id: '2',
-      name: 'Spanish Travel',
-      description: 'Useful Spanish phrases for traveling',
-      tags: ['Spanish', 'Travel', 'Intermediate'],
-      status: 'private',
-      owner: 'You',
-      sharedWith: [],
-      flashcards: [
-        { id: '1', term: '¿Dónde está el baño?', definition: 'Where is the bathroom?' },
-        { id: '2', term: '¿Cuánto cuesta?', definition: 'How much does it cost?' },
-        { id: '3', term: 'Una mesa para dos', definition: 'A table for two' },
-      ],
-      createdAt: new Date(),
-    },
-    {
-      id: '3',
-      name: 'Business English',
-      description: 'Professional English vocabulary and expressions',
-      tags: ['English', 'Business', 'Advanced'],
-      status: 'shared',
-      owner: 'You',
-      sharedWith: ['john@example.com', 'sarah@example.com'],
-      flashcards: [
-        {
-          id: '1',
-          term: 'Deadline',
-          definition: 'The latest time by which something must be completed',
-        },
-        {
-          id: '2',
-          term: 'Stakeholder',
-          definition: 'A person with an interest in a business or project',
-        },
-      ],
-      createdAt: new Date(),
-    },
-  ]);
+  const { data, isLoading, isError } = useGetCollections();
 
-  const handleDeleteCollection = (id: string) => {
-    setCollections(collections.filter((c) => c.id !== id));
-  };
+  console.log(data);
+
+  const handleDeleteCollection = (id: string) => {};
 
   return (
     <div className="min-h-screen bg-background">
@@ -94,30 +41,34 @@ const Collections = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="p-6">
               <div className="text-sm text-muted-foreground mb-1">Total Collections</div>
-              <div className="text-3xl font-bold text-foreground">{collections.length}</div>
+              <div className="text-3xl font-bold text-foreground">{data?.length ?? 0}</div>
             </Card>
             <Card className="p-6">
               <div className="text-sm text-muted-foreground mb-1">Total Flashcards</div>
               <div className="text-3xl font-bold text-foreground">
-                {collections.reduce((sum, c) => sum + c.flashcards.length, 0)}
+                {data?.reduce((sum, c) => sum + c.flashcards_count, 0) ?? 0}
               </div>
             </Card>
             <Card className="p-6">
               <div className="text-sm text-muted-foreground mb-1">Public</div>
               <div className="text-3xl font-bold text-primary">
-                {collections.filter((c) => c.status === 'public').length}
+                {data?.filter((c) => c.access_level === 'public').length ?? 0}
               </div>
             </Card>
             <Card className="p-6">
               <div className="text-sm text-muted-foreground mb-1">Shared</div>
-              <div className="text-3xl font-bold text-accent">
-                {collections.filter((c) => c.status === 'shared').length}
+              <div className="text-3xl font-bold ">
+                {data?.filter((c) => c.access_level === 'restrict').length ?? 0}
               </div>
             </Card>
           </div>
 
           {/* List */}
-          <CollectionList collections={collections} onDelete={handleDeleteCollection} />
+          {isLoading ? (
+            <span>Loading...</span>
+          ) : (
+            <CollectionList collections={data!} onDelete={handleDeleteCollection} />
+          )}
         </div>
       </div>
     </div>
