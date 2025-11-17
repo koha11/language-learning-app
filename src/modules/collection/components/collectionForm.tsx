@@ -17,6 +17,7 @@ import React, { useState } from 'react';
 import ImportFlashcardModal from './importFlashcardModal';
 import { collectionSchema } from '../schemas/collection.schema';
 import type { CollectionType } from '../types/collection';
+import ExtractParagraphModal from './extractParagraphModal';
 
 type CollectionFormProps = {
   onSubmit: (data: CollectionType) => void;
@@ -26,6 +27,7 @@ type CollectionFormProps = {
 
 const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProps) => {
   const [openImportModal, setOpenImportModal] = React.useState(false);
+  const [openExtractModal, setOpenExtractModal] = React.useState(false);
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
   const [tagInput, setTagInput] = useState('');
   const [sharedWith, setSharedWith] = useState<string[]>(initialData?.sharedWith || []);
@@ -62,6 +64,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProp
     control,
     name: 'flashcards',
   });
+
   React.useEffect(() => {
     if (initialData) {
       reset({
@@ -242,6 +245,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProp
           <div className="space-y-2 pt-4 border-t border-border">
             <div className="flex items-center gap-4">
               <Label>Flashcards ({fields.length})</Label>
+
               <Button
                 type="button"
                 className=" rounded-full"
@@ -249,6 +253,15 @@ const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProp
               >
                 <UploadIcon />
                 <span>Import</span>
+              </Button>
+
+              <Button
+                type="button"
+                className=" rounded-full"
+                onClick={() => setOpenExtractModal(true)}
+              >
+                <UploadIcon />
+                <span>Extract Paragraph</span>
               </Button>
             </div>
             <div className="flex flex-col gap-4 mt-4">
@@ -315,9 +328,17 @@ const CollectionForm = ({ onSubmit, initialData, isEditing }: CollectionFormProp
           </Button>
         </div>
       </form>
+
       <ImportFlashcardModal
         open={openImportModal}
         onChange={() => setOpenImportModal(false)}
+        value={fields}
+        setValue={setValue}
+      />
+
+      <ExtractParagraphModal
+        open={openExtractModal}
+        onChange={() => setOpenExtractModal(false)}
         value={fields}
         setValue={setValue}
       />
