@@ -37,9 +37,10 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
   const form = useForm<FormCollectionType>({
     resolver: zodResolver(formCollectionSchema),
     defaultValues: {
+      id: initialData?.id || null,
       name: initialData?.name || '',
       description: initialData?.description || '',
-      tags: initialData?.tags,
+      tags: initialData?.tags || null,
       access_level: initialData?.access_level || 'private',
       // sharedWith: initialData?.sharedWith || [],
       flashcards: initialData?.flashcards || [
@@ -68,6 +69,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
   React.useEffect(() => {
     if (initialData) {
       reset({
+        id: initialData?.id,
         name: initialData.name,
         description: initialData.description,
         tags: initialData.tags,
@@ -75,8 +77,9 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
         // sharedWith: initialData.sharedWith,
         flashcards: initialData.flashcards,
       });
-
-      setTags(initialData.tags.split(' '));
+      if (initialData.tags) {
+        setTags(initialData.tags.split(' '));
+      }
       // setSharedWith(initialData.sharedWith);
     }
   }, [initialData, form, reset]);
@@ -102,7 +105,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
     if (emailInput.trim() && !sharedWith.includes(emailInput.trim())) {
       const newEmails = [...sharedWith, emailInput.trim()];
       setSharedWith(newEmails);
-      setValue('sharedWith', newEmails);
+      // setValue('sharedWith', newEmails);
       setEmailInput('');
     }
   };
@@ -110,14 +113,11 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
   const handleRemoveEmail = (email: string) => {
     const newEmails = sharedWith.filter((e) => e !== email);
     setSharedWith(newEmails);
-    setValue('sharedWith', newEmails);
+    // setValue('sharedWith', newEmails);
   };
 
   const onFormSubmit = (data: FormCollectionType) => {
     console.log(data);
-
-    console.log('Submit');
-
     onSubmit(data);
   };
 
