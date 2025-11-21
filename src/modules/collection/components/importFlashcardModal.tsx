@@ -58,7 +58,7 @@ const ImportFlashcardModal = ({ open, onChange, value, setValue }: Props) => {
       .filter(Boolean) as FlashcardType[];
   };
 
-  const handleBulkImport = () => {
+  const handleImport = () => {
     if (flashcardsPreview.length > 0) {
       const updatedFlashcards = [...value, ...flashcardsPreview];
       setValue('flashcards', updatedFlashcards);
@@ -116,7 +116,7 @@ const ImportFlashcardModal = ({ open, onChange, value, setValue }: Props) => {
             Copy and Paste your data from (Word, Excel, Google Docs, etc)
           </DialogDescription>
         </DialogHeader>
-        <div className="max-h-[80vh] overflow-y-auto pr-4 ">
+        <div className="max-h-[80vh] overflow-y-auto pr-4 pl-1 ">
           <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="bulkInput">Paste your data here</Label>
@@ -267,7 +267,7 @@ const ImportFlashcardModal = ({ open, onChange, value, setValue }: Props) => {
 
             <Button
               type="button"
-              onClick={handleBulkImport}
+              onClick={handleImport}
               variant="secondary"
               className="w-full py-6"
             >

@@ -1,6 +1,10 @@
 import { httpClient } from '@/core/htpp/httpClient';
-import type { CollectionDetailType, CollectionType, FormCollectionType, FormParagraphType } from '../types/collection';
-import axios from 'axios';
+import type {
+  AutoGenFlashcardsType,
+  CollectionDetailType,
+  CollectionType,
+  FormCollectionType, FormParagraphType,
+} from '../types/collection';
 
 export const getCollections = async () => {
   const { data } = await httpClient.get<CollectionType[]>('/collections');
@@ -25,5 +29,10 @@ export const extractParagraph = async (payload: FormParagraphType) => {
 
 export const updateCollection = async (payload: FormCollectionType) => {
   const { data } = await httpClient.put(`/collections/${payload.id}/edit`, payload);
+  return data;
+};
+
+export const autoGenFlashcards = async (payload: AutoGenFlashcardsType) => {
+  const { data } = await httpClient.post(`/collections/auto-gen`, payload);
   return data;
 };

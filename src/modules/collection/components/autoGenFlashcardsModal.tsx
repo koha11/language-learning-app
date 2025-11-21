@@ -13,8 +13,12 @@ import { Textarea } from '@/components/ui/textarea';
 import type { FlashcardType } from '@/modules/flashcard/types/flashcard';
 import type { UseFormSetValue } from 'react-hook-form';
 import type { FormCollectionType } from '../types/collection';
-import { SparklesIcon, Upload } from 'lucide-react';
+import { SparklesIcon, Upload, UploadIcon } from 'lucide-react';
 import FlashcardFields from '@/modules/flashcard/components/flashcardFields';
+import { useMutationWithToast } from '@/shared/hooks/useMutationWithToast';
+import { autoGenFlashcards } from '../services/collection.services';
+import { useToast } from '@/shared/hooks/useToast';
+import FlashcardFieldsSkeleton from '@/modules/flashcard/components/flashcardFieldSkeleton';
 
 type Props = {
   open: boolean;
@@ -26,6 +30,9 @@ type Props = {
 const AutoGenFlashcardsModal = ({ open, onChange, value, setValue }: Props) => {
   const [prompt, setPrompt] = React.useState('');
   const [flashcardsPreview, setFlashcardsPreview] = React.useState<FlashcardType[]>([]);
+  const { toast } = useToast();
+  const { mutate, isPending } = useMutationWithToast(autoGenFlashcards);
+
   const handleTabKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Tab') {
       e.preventDefault();
@@ -41,11 +48,40 @@ const AutoGenFlashcardsModal = ({ open, onChange, value, setValue }: Props) => {
       });
     }
   };
+
+  const handleAutoGen = () => {
+    if (!prompt.trim()) return;
+    const payload = {
+      description: prompt,
+    };
+    mutate(payload, {
+      onSuccess: (response) => {
+        console.log(response);
+
+        if (response && response.data) {
+          setFlashcardsPreview(response.data);
+        }
+      },
+    });
+  };
+
+  const handleImport = () => {
+    if (flashcardsPreview.length > 0) {
+      const updatedFlashcards = [...value, ...flashcardsPreview];
+      setValue('flashcards', updatedFlashcards);
+      toast('Import successful');
+    } else {
+      toast('Nothing to import');
+      return;
+    }
+    onChange();
+  };
+
   return (
     <Dialog open={open} onOpenChange={onChange}>
       <DialogContent className="lg:min-w-[800px] md:min-w-[600px] w-[90%] pl-6 pr-2">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Auto gen flashcards</DialogTitle>
+          <DialogTitle className="text-2xl">Auto Generate Flashcards</DialogTitle>
           <DialogDescription className="text-[16px]">
             Copy and Paste your data from (Word, Excel, Google Docs, etc)
           </DialogDescription>
@@ -65,25 +101,42 @@ const AutoGenFlashcardsModal = ({ open, onChange, value, setValue }: Props) => {
               />
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 w-full">
               <span className="font-bold">Flashcards Preview</span>
-              {flashcardsPreview.map((card) => {
-                return (
-                  <div key={card.id} className="flex items-center">
-                    <FlashcardFields card={card} readOnly={true} />
-                  </div>
-                );
-              })}
+
+              {isPending
+                ? Array.from({ length: 5 }).map((_, index) => {
+                    return <FlashcardFieldsSkeleton key={index} />;
+                  })
+                : flashcardsPreview.map((card, index) => {
+                    return (
+                      <div key={index} className="flex items-center w-full">
+                        <FlashcardFields card={card} readOnly={true} />
+                      </div>
+                    );
+                  })}
             </div>
 
             <Button
               type="button"
-              // onClick={handleBulkImport}
-              variant="secondary"
+              isPending={isPending}
+              onClick={handleAutoGen}
+              variant="default"
               className="w-full py-6"
             >
-              <SparklesIcon className="w-4 h-4" />
+              {!isPending && <SparklesIcon className="w-4 h-4" />}
               Generate
+            </Button>
+            <Button
+              type="button"
+              isPending={isPending}
+              onClick={handleImport}
+              variant="secondary"
+              disabled={flashcardsPreview.length === 0}
+              className="w-full py-6"
+            >
+              <UploadIcon className="w-4 h-4" />
+              Import
             </Button>
           </div>
         </div>

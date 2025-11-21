@@ -11,22 +11,38 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useToast } from '@/shared/hooks/useToast';
-import { LogIn } from 'lucide-react';
+import { LogIn as LogInIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import type { LoginPayload } from '../types/login';
-
-const Login = () => {
+import type { LoginType } from '../types/auth';
+import { loginSchema } from '../schemas/auth.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutationWithToast } from '@/shared/hooks/useMutationWithToast';
+import { Login } from '@/modules/auth/services/auth.services';
+const LoginPage = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { mutate, isPending } = useMutationWithToast(Login, {
+    success: 'Login success',
+    error: 'Login failed',
+    invalidateKeys: ['user'],
+  });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginPayload>();
+  } = useForm<LoginType>({
+    resolver: zodResolver(loginSchema),
+  });
 
-  const handleLogin = () => {
-    toast('Login success');
+  const handleLogin = (data: LoginType) => {
+    mutate(data, {
+      onSuccess: (data) => {
+        if (data && data.token) {
+          localStorage.setItem('token', data.token);
+          navigate('/');
+        }
+      },
+    });
   };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4">
@@ -34,7 +50,7 @@ const Login = () => {
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center mb-4">
             <div className="p-3 rounded-full bg-primary/10">
-              <LogIn className="h-6 w-6 text-primary" />
+              <LogInIcon className="h-6 w-6 text-primary" />
             </div>
           </div>
           <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
@@ -73,8 +89,8 @@ const Login = () => {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4 mt-6">
-            <Button type="submit" className="w-full py-5">
-              Sign In
+            <Button isPending={isPending} type="submit" className="w-full py-5">
+              Login
             </Button>
             <p className="text-sm text-muted-foreground text-center">
               Don't have an account?{' '}
@@ -89,4 +105,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

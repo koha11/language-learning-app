@@ -1,12 +1,12 @@
 import { httpClient } from '@/core/htpp/httpClient';
-import type { LoginPayload } from '../types/login';
-import type { RegisterPayload } from '../types/register';
+import type { LoginType, SignUpType } from '../types/auth';
+import type { LoginResponse } from '../types/loginResponse';
 
-export const Login = async (payload: LoginPayload) => {
-  const { data } = await httpClient.post('/login', payload);
+export const Login = async (payload: LoginType) => {
+  const { data } = await httpClient.post<LoginResponse>('/auth/login', payload);
   return data;
 };
-export const Register = async (payload: RegisterPayload) => {
-  const { data } = await httpClient.post('/register', payload);
+export const Signup = async (payload: SignUpType) => {
+  const { data } = await httpClient.post('/auth/signup', payload);
   return data;
 };
