@@ -67,6 +67,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'flashcards',
+    keyName: '_internalId',
   });
 
   React.useEffect(() => {
@@ -120,8 +121,15 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
   };
 
   const onFormSubmit = (data: FormCollectionType) => {
-    console.log(data);
-    onSubmit(data);
+    const finalFlashcards = data.flashcards.filter(
+      (fc) => fc.term.trim() !== '' || fc.definition.trim() !== '',
+    );
+
+    const finalData: FormCollectionType = {
+      ...data,
+      flashcards: finalFlashcards,
+    };
+    onSubmit(finalData);
   };
 
   return (
@@ -311,7 +319,13 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
         </div>
 
         <div className="flex gap-2">
-          <Button isPending={isPending} type="submit" size="lg" className="flex-1 py-6">
+          <Button
+            isPending={isPending}
+            onClick={() => console.log(form.formState.values)}
+            type="submit"
+            size="lg"
+            className="flex-1 py-6"
+          >
             {isEditing ? 'Update Collection' : 'Create Collection'}
           </Button>
           <Button type="button" variant="outline" size="lg" className="py-6">
