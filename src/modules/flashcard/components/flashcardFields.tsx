@@ -15,7 +15,7 @@ type Props = {
 
 const FlashcardFields = ({ index, card, register, readOnly, onRemove }: Props) => {
   return (
-    <div className="flex items-center mt-2">
+    <div className="flex items-center mt-2 w-full">
       <div className="flex items-center gap-8 w-full">
         {/* TERM */}
         <div className="space-y-2 w-full">
