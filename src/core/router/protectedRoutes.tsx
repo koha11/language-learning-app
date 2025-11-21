@@ -6,7 +6,7 @@ const ProtectedRoutes = () => {
   const { isLoggedIn, isLoading } = useAuth();
 
   if (isLoading) return <span>Loading...</span>;
-  if (!isLoggedIn) return <Navigate to="/auth/login" replace />;
+  if (!isLoggedIn) return <Navigate to="/login" replace />;
   return <Outlet />;
 };
 export default ProtectedRoutes;
