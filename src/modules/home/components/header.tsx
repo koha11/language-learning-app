@@ -3,13 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/shared/hooks/useAuth';
 
 const Header = () => {
   const location = useLocation();
-  const fakeUser = {
-    id: 1,
-    name: 'Kzzz',
-  };
+
+  const { user, isLoading } = useAuth();
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -24,39 +23,45 @@ const Header = () => {
           </div>
           <span className="text-xl font-bold text-foreground">LinguaLearn</span>
         </Link>
+        {isLoading ? (
+          <div className="w-[50%]"></div>
+        ) : user ? (
+          <nav className="hidden md:flex items-center gap-6">
+            <Link
+              to="/collections"
+              className={cn(
+                'text-foreground hover:text-primary transition-colors font-medium',
+                isActive('/collections') && 'text-primary',
+              )}
+            >
+              Collections
+            </Link>
+            <Link
+              to="/progress"
+              className={cn(
+                'text-foreground hover:text-primary transition-colors font-medium',
+                isActive('/progress') && 'text-primary',
+              )}
+            >
+              Progress
+            </Link>
+          </nav>
+        ) : (
+          <>
+            <div className="relative w-[50%]">
+              <SearchIcon className=" absolute left-3 size-4 opacity-60 top-1/2 -translate-y-1/2" />
+              <Input className=" rounded-full w-full pl-9 bg-gray-100" />
+            </div>
 
-        {/* <nav className="hidden md:flex items-center gap-6">
-          <Link
-            to="/collections"
-            className={cn(
-              'text-foreground hover:text-primary transition-colors font-medium',
-              isActive('/collections') && 'text-primary',
-            )}
-          >
-            Collections
-          </Link>
-          <Link
-            to="/progress"
-            className={cn(
-              'text-foreground hover:text-primary transition-colors font-medium',
-              isActive('/progress') && 'text-primary',
-            )}
-          >
-            Progress
-          </Link>
-        </nav> */}
-        <div className="relative w-[50%]">
-          <SearchIcon className=" absolute left-3 size-4 opacity-60 top-1/2 -translate-y-1/2" />
-          <Input className=" rounded-full w-full pl-9 bg-gray-100" />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Link to="/login">
-            <Button className=" rounded-full bg-blue-500 hover:bg-blue-500 cursor-pointer">
-              Login
-            </Button>
-          </Link>
-        </div>
+            <div className="flex items-center gap-2">
+              <Link to="/login">
+                <Button className=" rounded-full bg-blue-500 hover:bg-blue-500 cursor-pointer">
+                  Login
+                </Button>
+              </Link>
+            </div>
+          </>
+        )}
       </div>
     </header>
   );
