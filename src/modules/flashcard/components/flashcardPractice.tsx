@@ -1,16 +1,113 @@
-import { useState } from 'react';
+import React from 'react';
+import { motion, AnimatePresence, scale } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Edit2Icon,
+  PauseIcon,
+  PlayIcon,
+  RotateCcw,
+  ShuffleIcon,
+  Volume2Icon,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { FlashcardType } from '../types/flashcard';
+import { textToSpeech } from '@/shared/utils/textToSpeech';
+import EditFlashcardModal from './editFlashcardModal';
+import { shuffleArray } from '@/shared/utils/shuffleArray';
+
 type FlashcardPracticeProps = {
   flashcards: FlashcardType[];
 };
 
 const FlashcardPractice = ({ flashcards }: FlashcardPracticeProps) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [isFlipped, setIsFlipped] = React.useState(false);
+  const [direction, setDirection] = React.useState(0);
+  const [isPlayingAuto, setIsPlayingAuto] = React.useState(false);
+  const [isShuffle, setIsShuffle] = React.useState(false);
+  const [editCard, setEditCard] = React.useState<FlashcardType | null>(null);
+  const [shuffledFlashcards, setShuffledFlashcards] = React.useState<FlashcardType[]>([]);
+
+  const termDuration = 3000;
+  const definitionDuration = 3000;
+
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 80 : -80,
+      scale: 0.96,
+    }),
+    center: {
+      x: 0,
+      scale: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction > 0 ? -80 : 80,
+      scale: 0.96,
+    }),
+  };
+
+  const handleNext = () => {
+    setDirection(1);
+    setIsFlipped(false);
+    setCurrentIndex((prev) => (prev + 1) % flashcards.length);
+  };
+
+  const handlePrevious = () => {
+    setDirection(-1);
+    setIsFlipped(false);
+    setCurrentIndex((prev) => (prev - 1 + flashcards.length) % flashcards.length);
+  };
+
+  const handleFlip = () => {
+    setIsFlipped(!isFlipped);
+  };
+  const currentCard =
+    shuffledFlashcards.length > 0 ? shuffledFlashcards[currentIndex] : flashcards[currentIndex];
+
+  React.useEffect(() => {
+    if (!isPlayingAuto) return;
+
+    // Step 1: Show term
+    setIsFlipped(false);
+
+    // Step 2: Show definition
+    const flipTimeout = setTimeout(() => {
+      setIsFlipped(true);
+    }, termDuration);
+
+    // Step 3: Next and repeat
+    const nextTimeout = setTimeout(() => {
+      setDirection(1);
+
+      setCurrentIndex((prev) => {
+        if (prev === flashcards.length - 1) {
+          setIsPlayingAuto(false);
+          return prev;
+        }
+
+        return prev + 1;
+      });
+    }, termDuration + definitionDuration);
+
+    return () => {
+      clearTimeout(flipTimeout);
+      clearTimeout(nextTimeout);
+    };
+  }, [isPlayingAuto, currentIndex, flashcards.length]);
+
+  const handleShuffleMode = () => {
+    setIsFlipped(false);
+    if (!isShuffle) {
+      setIsShuffle(true);
+      setShuffledFlashcards(shuffleArray(flashcards));
+    } else {
+      setIsShuffle(false);
+      setShuffledFlashcards(flashcards);
+    }
+  };
 
   if (flashcards.length === 0) {
     return (
@@ -21,95 +118,128 @@ const FlashcardPractice = ({ flashcards }: FlashcardPracticeProps) => {
     );
   }
 
-  const handleNext = () => {
-    setIsFlipped(false);
-    setCurrentIndex((prev) => (prev + 1) % flashcards.length);
-  };
-
-  const handlePrevious = () => {
-    setIsFlipped(false);
-    setCurrentIndex((prev) => (prev - 1 + flashcards.length) % flashcards.length);
-  };
-
-  const handleFlip = () => {
-    setIsFlipped(!isFlipped);
-  };
-
-  const currentCard = flashcards[currentIndex];
-
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-6">
+    <div className="w-full max-w-4xl mx-auto space-y-6">
       <div className="perspective-1000">
-        <Card
-          onClick={handleFlip}
-          className={cn(
-            'relative h-80 cursor-pointer transition-all ease-linear duration-300 transform-gpu',
-            'hover:shadow-lg',
-          )}
-          style={{
-            transformStyle: 'preserve-3d',
-            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          }}
-        >
-          <div
-            className="absolute inset-0 flex items-center justify-center p-8 backface-hidden"
-            style={{ backfaceVisibility: 'hidden' }}
+        <AnimatePresence mode="wait" custom={direction} initial={false}>
+          <motion.div
+            key={currentIndex}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.12 }}
           >
-            <div className="text-center space-y-4">
-              <p className="text-4xl font-bold text-foreground">{currentCard.term}</p>
-              <p className="text-muted-foreground">Click to reveal</p>
-            </div>
-          </div>
+            <Card
+              className={cn(
+                'relative h-110 cursor-pointer transition-all ease-in-out duration-300 transform-gpu',
+                'hover:shadow-lg',
+              )}
+              style={{
+                transformStyle: 'preserve-3d',
+                transform: isFlipped ? 'rotateX(180deg)' : 'rotateX(0deg)',
+              }}
+            >
+              <div className="" style={{ backfaceVisibility: 'hidden' }}>
+                <div className="flex items-center justify-end gap-3 px-6 py-2 ">
+                  <button className=" hover:cursor-pointer relative z-50">
+                    <Edit2Icon className="size-5 text-muted-foreground hover:text-black/80" />
+                  </button>
+                  <button
+                    className=" hover:cursor-pointer relative z-50"
+                    onClick={() => {
+                      textToSpeech(currentCard.term);
+                    }}
+                  >
+                    <Volume2Icon className="size-6 text-muted-foreground hover:text-black/80" />
+                  </button>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center p-10 backface-hidden rounded-xl">
+                  <div className="text-center space-y-4">
+                    <p className="text-4xl font-bold text-foreground">{currentCard.term}</p>
+                    <p className="text-muted-foreground">Click to reveal</p>
+                  </div>
+                </div>
+              </div>
 
-          <div
-            className="absolute inset-0 flex items-center justify-center p-8 bg-primary text-primary-foreground backface-hidden rounded-lg"
-            style={{
-              backfaceVisibility: 'hidden',
-              transform: 'rotateY(180deg)',
-            }}
-          >
-            <div className="text-center space-y-4">
-              <p className="text-4xl font-bold">{currentCard.definition}</p>
-              <p className="text-primary-foreground/80">Click to flip back</p>
-            </div>
-          </div>
-        </Card>
+              <div
+                className="absolute inset-0 flex flex-col  bg-primary text-primary-foreground backface-hidden rounded-xl"
+                style={{
+                  backfaceVisibility: 'hidden',
+                  transform: 'rotateX(180deg)',
+                }}
+              >
+                <div className="flex items-center justify-end gap-3 px-6 pt-9 ">
+                  <button className=" hover:cursor-pointer relative z-50">
+                    <Edit2Icon className="size-5 text-muted-foreground hover:text-black/80" />
+                  </button>
+                </div>
+                <div className="flex items-center flex-1 justify-center p-10 pt-0">
+                  <div className="text-center space-y-4">
+                    <p className="text-4xl font-bold">{currentCard.definition}</p>
+                    <p className="text-primary-foreground/80">Click to flip back</p>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute inset-0 z-30" onClick={handleFlip} />
+            </Card>
+          </motion.div>
+        </AnimatePresence>
       </div>
+      <div className="grid grid-cols-3 ">
+        <div className=""></div>
+        <div className="flex items-center justify-center  gap-8">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={handlePrevious}
+            title="Previous"
+            disabled={currentIndex === 0}
+          >
+            <ArrowLeft className="size-5" />
+          </Button>
 
-      <div className="flex items-center justify-between gap-4">
-        <Button variant="outline" size="lg" onClick={handlePrevious} disabled={currentIndex === 0}>
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Previous
-        </Button>
+          <div>
+            <p className="text-foreground font-semibold">
+              {currentIndex + 1} / {flashcards.length}
+            </p>
+          </div>
 
-        <div>
-          <p className="text-muted-foreground">
-            {currentIndex + 1} of {flashcards.length}
-          </p>
+          <Button
+            variant="outline"
+            size="lg"
+            title="Next"
+            onClick={handleNext}
+            disabled={currentIndex === flashcards.length - 1}
+          >
+            <ArrowRight className="size-5" />
+          </Button>
         </div>
-
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={handleNext}
-          disabled={currentIndex === flashcards.length - 1}
-        >
-          Next
-          <ArrowRight className="w-5 h-5 ml-2" />
-        </Button>
+        <div className="flex items-center gap-4 justify-end">
+          <Button
+            onClick={() => {
+              setIsFlipped(false);
+              setIsPlayingAuto((prev) => !prev);
+            }}
+            variant={isPlayingAuto ? 'default' : 'outline'}
+            size="lg"
+            title={isPlayingAuto ? 'Pause' : 'Play'}
+          >
+            {isPlayingAuto ? <PauseIcon /> : <PlayIcon />}
+          </Button>
+          <Button
+            onClick={handleShuffleMode}
+            variant={isShuffle ? 'default' : 'outline'}
+            size="lg"
+            title="Shuffle"
+          >
+            <ShuffleIcon />
+          </Button>
+        </div>
       </div>
 
-      <div className="flex gap-2 justify-center pt-4">
-        {flashcards.map((_, index) => (
-          <div
-            key={index}
-            className={cn(
-              'h-2 rounded-full transition-all',
-              index === currentIndex ? 'w-8 bg-primary' : 'w-2 bg-border',
-            )}
-          />
-        ))}
-      </div>
+      <EditFlashcardModal open={!!editCard} onChange={() => setEditCard(null)} card={editCard} />
     </div>
   );
 };
