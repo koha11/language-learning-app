@@ -1,13 +1,19 @@
 import Layout from '@/shared/layouts/layout';
 import Quiz from './pages/quiz';
+import ProtectedRoutes from '@/core/router/protectedRoutes';
 
 export const quizRoutes = [
   {
-    element: <Layout />,
+    element: <ProtectedRoutes />,
     children: [
       {
-        path: '/collections/:id/quiz',
-        element: <Quiz />,
+        element: <Layout />,
+        children: [
+          {
+            path: '/collections/:id/quiz',
+            element: <Quiz />,
+          },
+        ],
       },
     ],
   },
