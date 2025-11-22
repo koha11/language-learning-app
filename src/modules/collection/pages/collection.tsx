@@ -38,32 +38,47 @@ const Collections = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="p-6">
               <div className="text-sm text-muted-foreground mb-1">Total Collections</div>
-              <div className="text-3xl font-bold text-foreground">{data?.length ?? 0}</div>
+              {data ? (
+                <div className="text-3xl font-bold text-foreground">{data?.length ?? 0}</div>
+              ) : (
+                <div className="h-9 w-20 bg-muted rounded" />
+              )}
             </Card>
             <Card className="p-6">
               <div className="text-sm text-muted-foreground mb-1">Total Flashcards</div>
-              <div className="text-3xl font-bold text-foreground">
-                {data?.reduce((sum, c) => sum + c.flashcards_count, 0) ?? 0}
-              </div>
+              {data ? (
+                <div className="text-3xl font-bold text-foreground">
+                  {data?.reduce((sum, c) => sum + c.flashcards_count, 0) ?? 0}
+                </div>
+              ) : (
+                <div className="h-9 w-20 bg-muted rounded" />
+              )}
             </Card>
             <Card className="p-6">
               <div className="text-sm text-muted-foreground mb-1">Public</div>
-              <div className="text-3xl font-bold text-primary">
-                {data?.filter((c) => c.access_level === 'public').length ?? 0}
-              </div>
+              {data ? (
+                <div className="text-3xl font-bold text-primary">
+                  {data?.filter((c) => c.access_level === 'public').length ?? 0}
+                </div>
+              ) : (
+                <div className="h-9 w-20 bg-muted rounded" />
+              )}
             </Card>
             <Card className="p-6">
               <div className="text-sm text-muted-foreground mb-1">Shared</div>
-              <div className="text-3xl font-bold ">
-                {data?.filter((c) => c.access_level === 'shared').length ?? 0}
-              </div>
+              {data ? (
+                <div className="text-3xl font-bold ">
+                  {data?.filter((c) => c.access_level === 'shared').length ?? 0}
+                </div>
+              ) : (
+                <div className="h-9 w-20 bg-muted rounded" />
+              )}
             </Card>
           </div>
 
-          {/* List */}
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {Array.from({ length: 6 }).map((_, i) => (
+              {Array.from({ length: 10 }).map((_, i) => (
                 <CollectionSkeleton key={i} />
               ))}
             </div>
