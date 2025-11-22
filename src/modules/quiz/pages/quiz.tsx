@@ -3,8 +3,10 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RotateCcw, Trophy, CheckIcon, XIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { Flashcard } from '@/modules/flashcard/types/flashcard';
-import { useLocation } from 'react-router-dom';
+import type { FlashcardType } from '@/modules/flashcard/types/flashcard';
+import { useLocation, useParams } from 'react-router-dom';
+import { useGetCollectionById } from '@/modules/collection/hooks/collection.hooks';
+import { shuffleArray } from '@/shared/utils/shuffleArray';
 
 type Question = {
   id: string;
@@ -14,37 +16,31 @@ type Question = {
 };
 
 const Quiz = () => {
-  const location = useLocation();
-  const { flashcards }: { flashcards: Flashcard[] } = location.state || {};
+  const { id } = useParams();
+
+  const { data, isLoading, isError } = useGetCollectionById(Number(id!));
   const [currentQuestion, setCurrentQuestion] = React.useState(0);
   const [selectedAnswer, setSelectedAnswer] = React.useState<number | null>(null);
   const [showResult, setShowResult] = React.useState(false);
   const [score, setScore] = React.useState(0);
   const [answers, setAnswers] = React.useState<{ questionId: string; correct: boolean }[]>([]);
-
   const [questions, setQuestions] = React.useState<Question[]>([]);
 
-  const question = questions[currentQuestion];
-  const isCorrect = selectedAnswer === question?.correctAnswer;
-  const isQuizComplete = currentQuestion === questions.length - 1 && showResult;
+  function generateQuizFromFlashcards(flashcards: FlashcardType[]) {
+    return flashcards.map((card) => {
+      const otherDefs = flashcards.filter((f) => f.id !== card.id);
 
-  function generateQuizFromFlashcards(flashcards: Flashcard[], numQuestions = 5) {
-    const shuffled = [...flashcards].sort(() => Math.random() - 0.5);
-    const selected = shuffled.slice(0, numQuestions);
-
-    return selected.map((card) => {
-      const otherDefs = flashcards
-        .filter((f) => f.id !== card.id)
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3)
+      const defs = flashcards.length >= 4 ? 3 : flashcards.length - 1;
+      const shuffleDefs = shuffleArray(otherDefs)
+        .slice(0, defs)
         .map((f) => f.definition);
 
-      const options = [...otherDefs, card.definition].sort(() => Math.random() - 0.5);
+      const options = shuffleArray([...shuffleDefs, card.definition]);
       const correctAnswer = options.indexOf(card.definition);
 
       return {
         id: card.id,
-        question: `${card.term}?`,
+        question: `${card.term}`,
         options,
         correctAnswer,
       };
@@ -63,7 +59,7 @@ const Quiz = () => {
     setAnswers([...answers, { questionId: question.id, correct }]);
     setTimeout(() => {
       handleNext();
-    }, 1500);
+    }, 2000);
   };
 
   const handleNext = () => {
@@ -75,6 +71,7 @@ const Quiz = () => {
   };
 
   const handleRestart = () => {
+    localStorage.removeItem(`quiz-progress-${id}`);
     setCurrentQuestion(0);
     setSelectedAnswer(null);
     setShowResult(false);
@@ -82,19 +79,49 @@ const Quiz = () => {
     setAnswers([]);
   };
   React.useEffect(() => {
-    if (flashcards?.length) {
-      const quizData = generateQuizFromFlashcards(flashcards, 5);
-      setQuestions(quizData);
-    }
-  }, [flashcards]);
+    if (!data?.flashcards) return;
 
-  if (!questions.length) {
+    const saved = localStorage.getItem(`quiz-progress-${id}`);
+
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setQuestions(parsed.questions);
+      setCurrentQuestion(parsed.currentQuestion);
+      setScore(parsed.score);
+      setAnswers(parsed.answers);
+      setShowResult(parsed.showResult);
+
+      return;
+    }
+
+    const quizData = generateQuizFromFlashcards(data.flashcards);
+    setQuestions(quizData);
+  }, [data, id]);
+
+  React.useEffect(() => {
+    if (!questions.length) return;
+    localStorage.setItem(
+      `quiz-progress-${id}`,
+      JSON.stringify({
+        currentQuestion,
+        score,
+        answers,
+        showResult,
+        questions,
+      }),
+    );
+  }, [currentQuestion, score, answers, questions, id, showResult]);
+
+  if (questions.length === 0) {
     return (
       <div className="text-center py-20 text-muted-foreground">
         Not enough flashcards to start the quiz.
       </div>
     );
   }
+  const question = questions[currentQuestion];
+  const isCorrect = selectedAnswer === question?.correctAnswer;
+  const isQuizComplete = currentQuestion === questions.length - 1 && showResult;
 
   if (isQuizComplete) {
     const percentage = Math.round((score / questions.length) * 100);
@@ -162,15 +189,16 @@ const Quiz = () => {
     <div className="min-h-screen bg-background ">
       <div className="container mx-auto  px-4 py-8 mt-20">
         <div className="max-w-5xl mx-auto ">
-          <div className="flex items-end justify-between">
-            <div>
-              <h2 className="text-3xl font-bold text-foreground">Quiz Time</h2>
-              <p className="text-muted-foreground mt-2 ">
-                Question {currentQuestion + 1} of {questions.length}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <div className="px-4 py-2 rounded-full text-black font-semibold">Score: {score}</div>
+          <div className="flex flex-col">
+            <h2 className="text-3xl font-bold text-foreground">Quiz Time</h2>
+            <p className="text-muted-foreground mt-2 ">
+              Question {currentQuestion + 1} of {questions.length}
+            </p>
+            <div className="w-full bg-border rounded-full h-3 mt-4">
+              <div
+                className="bg-[#21eba4] h-3 rounded-full transition-all"
+                style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+              />
             </div>
           </div>
 
@@ -195,15 +223,15 @@ const Quiz = () => {
                       'hover:bg-gray-100 ',
                       'disabled:cursor-not-allowed',
                       isSelected && !showResult && 'border-primary bg-primary/5',
-                      showCorrectAnswer && 'border-green-500 bg-green-100',
-                      showIncorrectAnswer && 'border-red-500 bg-destructive/5',
+                      showCorrectAnswer && 'border-green-500 bg-green-100 hover:bg-green-100',
+                      showIncorrectAnswer && 'border-red-500 bg-red-100 hover:bg-red-100',
                       !isSelected && !showResult && 'border-border',
                     )}
                   >
                     <div className={`flex items-center justify-between `}>
-                      <div className="flex items-center gap-6">
+                      <div className="flex items-center gap-6 mr-4">
                         <span className="text-sm">{index + 1}</span>
-                        <span className="font-medium text-foreground">{option}</span>
+                        <span className="font-medium text-foreground line-clamp-1">{option}</span>
                       </div>
                       {showCorrectAnswer && <CheckIcon className="w-6 h-6 text-green-500" />}
                       {showIncorrectAnswer && <XIcon className="w-6 h-6 text-destructive" />}
@@ -211,17 +239,6 @@ const Quiz = () => {
                   </button>
                 );
               })}
-            </div>
-            <div className="flex gap-2 justify-center mt-10">
-              {questions.map((_, index) => (
-                <div
-                  key={index}
-                  className={cn(
-                    'h-2 w-2 rounded-full transition-all',
-                    index === currentQuestion ? 'bg-primary scale-125' : 'bg-gray-200',
-                  )}
-                />
-              ))}
             </div>
           </Card>
         </div>
