@@ -21,6 +21,7 @@ import AutoGenFlashcardsModal from './autoGenFlashcardsModal';
 import FlashcardFields from '@/modules/flashcard/components/flashcardFields';
 import type { FlashcardType } from '@/modules/flashcard/types/flashcard';
 import { useNavigate } from 'react-router-dom';
+import SearchSelect from './searchSelect';
 
 type CollectionFormProps = {
   onSubmit: (data: FormCollectionType) => void;
@@ -37,7 +38,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
   const [openAutoGenModal, setOpenAutoGenModal] = React.useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
-  const [sharedWith, setSharedWith] = useState<string[]>(initialData?.sharedWith || []);
+  const [sharedWith, setSharedWith] = useState<string[]>([]);
   const [emailInput, setEmailInput] = useState('');
 
   const form = useForm<FormCollectionType>({
@@ -48,7 +49,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
       description: initialData?.description || '',
       tags: initialData?.tags || null,
       access_level: initialData?.access_level || 'private',
-      // sharedWith: initialData?.sharedWith || [],
+      access_users: initialData?.access_users || [],
       flashcards: initialData?.flashcards || [
         {
           term: '',
@@ -81,13 +82,12 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
         description: initialData.description,
         tags: initialData.tags,
         access_level: initialData.access_level,
-        // sharedWith: initialData.sharedWith,
+        access_users: initialData.access_users || [],
         flashcards: initialData.flashcards,
       });
       if (initialData.tags) {
         setTags(initialData.tags.split(','));
       }
-      // setSharedWith(initialData.sharedWith);
     }
   }, [initialData, form, reset]);
 
@@ -106,21 +106,6 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
     const newTags = tags.filter((t) => t !== tag);
     setTags(newTags);
     setValue('tags', newTags.join(','));
-  };
-
-  const handleAddEmail = () => {
-    if (emailInput.trim() && !sharedWith.includes(emailInput.trim())) {
-      const newEmails = [...sharedWith, emailInput.trim()];
-      setSharedWith(newEmails);
-      // setValue('sharedWith', newEmails);
-      setEmailInput('');
-    }
-  };
-
-  const handleRemoveEmail = (email: string) => {
-    const newEmails = sharedWith.filter((e) => e !== email);
-    setSharedWith(newEmails);
-    // setValue('sharedWith', newEmails);
   };
 
   const onFormSubmit = (data: FormCollectionType) => {
@@ -189,6 +174,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
                 Add
               </Button>
             </div>
+
             <div className="flex flex-wrap gap-2 mt-2">
               {tags.map((tag) => (
                 <span
@@ -221,7 +207,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
                   <SelectContent>
                     <SelectItem value="private">Private</SelectItem>
                     <SelectItem value="public">Public</SelectItem>
-                    <SelectItem value="shared">Shared with specific users</SelectItem>
+                    <SelectItem value="shared">Shared with friends</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -230,38 +216,11 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
 
           {access_level === 'shared' && (
             <div className="space-y-2">
-              <Label htmlFor="sharedWith">Share with (emails)</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="sharedWith"
-                  type="email"
-                  value={emailInput}
-                  onChange={(e) => setEmailInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddEmail())}
-                  placeholder="user@example.com"
-                  className="py-5"
-                />
-                <Button type="button" onClick={handleAddEmail} variant="secondary">
-                  Add
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {sharedWith.map((email) => (
-                  <span
-                    key={email}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-black rounded-full text-sm"
-                  >
-                    {email}
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveEmail(email)}
-                      className="hover:text-accent/80"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
+              <Label htmlFor="sharedWith">Share by email</Label>
+              <SearchSelect
+                users={watch('access_users') ?? []}
+                onChange={(value) => setValue('access_users', value)}
+              />
             </div>
           )}
 
@@ -326,13 +285,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
         </div>
 
         <div className="flex gap-2">
-          <Button
-            isPending={isPending}
-            onClick={() => console.log(form.formState.values)}
-            type="submit"
-            size="lg"
-            className="flex-1 py-6"
-          >
+          <Button isPending={isPending} type="submit" size="lg" className="flex-1 py-6">
             {isEditing ? 'Update Collection' : 'Create Collection'}
           </Button>
           <Button
