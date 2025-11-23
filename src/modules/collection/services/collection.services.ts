@@ -3,7 +3,8 @@ import type {
   AutoGenFlashcardsType,
   CollectionDetailType,
   CollectionType,
-  FormCollectionType, FormParagraphType,
+  FormCollectionType,
+  FormParagraphType,
 } from '../types/collection';
 
 export const getCollections = async () => {
@@ -28,11 +29,16 @@ export const extractParagraph = async (payload: FormParagraphType) => {
 };
 
 export const updateCollection = async (payload: FormCollectionType) => {
-  const { data } = await httpClient.put(`/collections/${payload.id}/edit`, payload);
+  const { data } = await httpClient.put(`/collections/${payload.id}`, payload);
   return data;
 };
 
 export const autoGenFlashcards = async (payload: AutoGenFlashcardsType) => {
   const { data } = await httpClient.post(`/collections/auto-gen`, payload);
+  return data;
+};
+
+export const deleteCollection = async (id: number) => {
+  const { data } = await httpClient.delete(`/collections/${id}`);
   return data;
 };
