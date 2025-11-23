@@ -5,7 +5,7 @@ export const addFlashcard = async (payload: { flashcard: FlashcardType; collecti
   console.log(payload);
 
   const { data } = await httpClient.post(
-    `/collections/${payload.collectionId}/add-flashcard`,
+    `/collections/${payload.collectionId}/flashcards`,
     payload.flashcard,
   );
   return data;
@@ -15,7 +15,7 @@ export const updateFlashcard = async (payload: {
   collectionId: number;
 }) => {
   const { data } = await httpClient.put(
-    `/collections/${payload.collectionId}/edit-flashcard`,
+    `/collections/${payload.collectionId}/flashcards`,
     payload.flashcard,
   );
   return data;
