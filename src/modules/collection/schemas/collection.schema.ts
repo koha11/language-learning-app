@@ -24,6 +24,7 @@ export const formCollectionSchema = z.object({
   owner_id: z.number().optional(),
   access_level: z.enum(['private', 'public', 'shared']),
   flashcards: z.array(FlashcardSchema),
+  access_users: z.array(userSchema).optional().nullable(),
 });
 
 export const collectionDetailSchema = collectionSchema.extend({
