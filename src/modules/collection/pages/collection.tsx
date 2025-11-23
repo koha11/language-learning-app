@@ -9,8 +9,6 @@ import CollectionSkeleton from '../components/collectionSkeleton';
 const Collections = () => {
   const { data, isLoading, isError } = useGetCollections();
 
-  const handleDeleteCollection = (id: number) => {};
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -83,7 +81,7 @@ const Collections = () => {
               ))}
             </div>
           ) : (
-            <CollectionList collections={data!} onDelete={handleDeleteCollection} />
+            <CollectionList collections={data!} />
           )}
         </div>
       </div>
