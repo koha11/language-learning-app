@@ -8,9 +8,10 @@ import DeleteCollectionModal from './deleteCollectionModal';
 
 type CollectionListProps = {
   collections: CollectionType[];
+  readOnly?: boolean;
 };
 
-const CollectionList = ({ collections }: CollectionListProps) => {
+const CollectionList = ({ collections, readOnly = false }: CollectionListProps) => {
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const navigate = useNavigate();
@@ -95,16 +96,20 @@ const CollectionList = ({ collections }: CollectionListProps) => {
                 <Eye className="w-4 h-4 mr-1" />
                 View
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(`/collections/${collection.id}/edit`)}
-              >
-                <Pencil className="size-4" />
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => setDeleteId(collection.id)}>
-                <Trash2 className="size-4" />
-              </Button>
+              {!readOnly && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate(`/collections/${collection.id}/edit`)}
+                  >
+                    <Pencil className="size-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setDeleteId(collection.id)}>
+                    <Trash2 className="size-4" />
+                  </Button>
+                </>
+              )}
             </div>
           </Card>
         ))}

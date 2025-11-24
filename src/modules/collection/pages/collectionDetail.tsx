@@ -9,23 +9,29 @@ import AddFlashcardModal from '@/modules/flashcard/components/addFlashcardModal'
 import FlashcardSkeleton from '@/modules/flashcard/components/flashcardSkeleton';
 import CollectionHeaderSkeleton from '../components/collectionHeaderSkeleton';
 import FlashcardPraciceSkeleton from '@/modules/flashcard/components/flashcardPracticeSkeleton';
+import { useAuth } from '@/shared/hooks/useAuth';
+import Loading from '@/components/ui/loading';
+import { canEditCollection } from '@/shared/utils/permission';
 
 const CollectionDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [addCard, setAddCard] = useState(false);
-
+  const { user, isLoading: ild } = useAuth();
   const { data, isLoading, isError } = useGetCollectionById(Number(id!));
 
+  const isOwner = canEditCollection(user, data!);
+  if (ild) {
+    return <Loading />;
+  }
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto space-y-8">
           <div>
-            <Button variant="ghost" onClick={() => navigate('/collections')} className="mb-4">
+            <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Collections
+              Back
             </Button>
             {isLoading ? (
               <>
@@ -72,10 +78,12 @@ const CollectionDetail = () => {
                       Start Quiz
                     </Button>
 
-                    <Button onClick={() => setAddCard(true)} size="lg">
-                      <Plus className="w-5 h-5 mr-2" />
-                      Add Card
-                    </Button>
+                    {isOwner && (
+                      <Button onClick={() => setAddCard(true)} size="lg">
+                        <Plus className="w-5 h-5 mr-2" />
+                        Add Card
+                      </Button>
+                    )}
                     <Button variant="outline" size="lg">
                       <ShareIcon className="w-5 h-5" />
                     </Button>

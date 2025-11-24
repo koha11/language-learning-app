@@ -3,11 +3,17 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { BookOpen, Brain, Sparkles, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/shared/hooks/useAuth';
+import Loading from '@/components/ui/loading';
 
 const Home = () => {
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10" style={{ background: 'var(--gradient-hero)' }} />
         <div className="container mx-auto px-4 py-20 md:py-32">
@@ -43,7 +49,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-20 bg-secondary/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -91,7 +96,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <Card className="max-w-4xl mx-auto p-8 md:p-12 text-center space-y-6 bg-gradient-to-br from-primary/5 to-accent/5 border-2">

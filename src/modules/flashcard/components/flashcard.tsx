@@ -6,11 +6,19 @@ import { Edit, Trash2, Volume2Icon } from 'lucide-react';
 import DeleteFlashcardModal from './deleteFlashcardModal';
 import EditFlashcardModal from './editFlashcardModal';
 import { textToSpeech } from '@/shared/utils/textToSpeech';
+import { useAuth } from '@/shared/hooks/useAuth';
+import { useGetCollectionById } from '@/modules/collection/hooks/collection.hooks';
+import { canEditCollection } from '@/shared/utils/permission';
+import { useParams } from 'react-router-dom';
 
 const Flashcard = ({ card }: { card: FlashcardType }) => {
+  const { id } = useParams();
   const [openEdit, setOpenEdit] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState<number | null>(null);
+  const { user } = useAuth();
+  const { data } = useGetCollectionById(Number(id!));
 
+  const isOwner = canEditCollection(user, data!);
   return (
     <>
       <Card className="p-6 hover:shadow-lg transition-shadow">
@@ -26,27 +34,28 @@ const Flashcard = ({ card }: { card: FlashcardType }) => {
               </button>
             </div>
           </div>
-
-          <div className="flex gap-2 pt-2 border-t border-border">
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex-1"
-              onClick={() => setOpenEdit(true)}
-            >
-              <Edit className="w-4 h-4 mr-1" />
-              Edit
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex-1 text-destructive hover:text-destructive  hover:bg-destructive/10"
-              onClick={() => setOpenDelete(card.id)}
-            >
-              <Trash2 className="w-4 h-4 mr-1" />
-              Delete
-            </Button>
-          </div>
+          {isOwner && (
+            <div className="flex gap-2 pt-2 border-t border-border">
+              <Button
+                variant="outline"
+                size="lg"
+                className="flex-1"
+                onClick={() => setOpenEdit(true)}
+              >
+                <Edit className="w-4 h-4 mr-1" />
+                Edit
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="flex-1 text-destructive hover:text-destructive  hover:bg-destructive/10"
+                onClick={() => setOpenDelete(card.id)}
+              >
+                <Trash2 className="w-4 h-4 mr-1" />
+                Delete
+              </Button>
+            </div>
+          )}
         </div>
       </Card>
       <EditFlashcardModal card={card} open={openEdit} onChange={() => setOpenEdit(false)} />

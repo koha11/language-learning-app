@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useGetCollectionById } from '../hooks/collection.hooks';
 import { useMutationWithToast } from '@/shared/hooks/useMutationWithToast';
 import { updateCollection } from '../services/collection.services';
+import Loading from '@/components/ui/loading';
 
 const EditCollection = () => {
   const { id } = useParams();
@@ -19,7 +20,7 @@ const EditCollection = () => {
   };
 
   if (isLoading) {
-    return <span>Loading...</span>;
+    return <Loading />;
   }
   return (
     <div className=" container mx-auto py-10">
