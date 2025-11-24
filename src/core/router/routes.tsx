@@ -4,6 +4,7 @@ import { homeRoutes } from '@/modules/home/routes';
 import { quizRoutes } from '@/modules/quiz/routes';
 import { progressRoutes } from '@/modules/progress/routes';
 import { collectionRoutes } from '@/modules/collection/routes';
+import { searchRoutes } from '@/modules/search/routes';
 
 export const appRoutes = [
   ...authRoutes,
@@ -13,4 +14,5 @@ export const appRoutes = [
   ...flashcardRoutes,
   ...progressRoutes,
   ...collectionRoutes,
+  ...searchRoutes,
 ];

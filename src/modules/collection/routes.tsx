@@ -7,6 +7,15 @@ import ProtectedRoutes from '@/core/router/protectedRoutes';
 
 export const collectionRoutes = [
   {
+    element: <Layout />,
+    children: [
+      {
+        path: '/collections/:id',
+        element: <CollectionDetail />,
+      },
+    ],
+  },
+  {
     element: <ProtectedRoutes />,
     children: [
       {
