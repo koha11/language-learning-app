@@ -18,6 +18,7 @@ import { loginSchema } from '../schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutationWithToast } from '@/shared/hooks/useMutationWithToast';
 import { Login } from '@/modules/auth/services/auth.services';
+import { email } from 'zod';
 const LoginPage = () => {
   const navigate = useNavigate();
   const { mutate, isPending } = useMutationWithToast(Login, {
@@ -29,6 +30,7 @@ const LoginPage = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<LoginType>({
     resolver: zodResolver(loginSchema),
@@ -37,7 +39,10 @@ const LoginPage = () => {
   const handleLogin = (data: LoginType) => {
     mutate(data, {
       onSuccess: (data) => {
-        if (data && data.token) {
+        if (data.isEmailVerified != undefined && !data.isEmailVerified) {
+          localStorage.setItem('email', watch('email'));
+          navigate('/unverify-email');
+        } else if (data && data.token) {
           localStorage.setItem('token', data.token);
           navigate('/');
         }

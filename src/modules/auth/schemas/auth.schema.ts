@@ -8,4 +8,8 @@ export const loginSchema = z.object({
 export const signupSchema = z.object({
   email: z.email(),
   name: z.string().min(1),
+  password: z.string().min(6),
+  dob: z.string().refine((val) => !Number.isNaN(Date.parse(val)), {
+    message: 'Invalid date',
+  }),
 });

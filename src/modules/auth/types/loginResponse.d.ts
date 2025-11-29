@@ -13,4 +13,5 @@ export type LoginResponse = {
     dob: string;
   };
   token: string;
+  isEmailVerified?: boolean;
 };
