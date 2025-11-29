@@ -19,7 +19,7 @@ export const collectionSchema = z.object({
 export const formCollectionSchema = z.object({
   id: z.number().optional().nullable(),
   name: z.string().min(1, 'Name is required').max(100),
-  description: z.string().max(200),
+  description: z.string().max(200).nullable(),
   tags: z.string().optional().nullable(),
   owner_id: z.number().optional(),
   access_level: z.enum(['private', 'public', 'shared']),
