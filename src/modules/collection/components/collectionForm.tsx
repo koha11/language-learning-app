@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { X, Plus, UploadIcon, SparklesIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ImportFlashcardModal from './importFlashcardModal';
 import { formCollectionSchema } from '../schemas/collection.schema';
 import type { FormCollectionType } from '../types/collection';
@@ -91,6 +91,34 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
     }
   }, [initialData, form, reset]);
 
+  useEffect(() => {
+    if (isEditing) return;
+
+    const handleBeforeUnload = () => {
+      // Do very small sync work only (like saving to localStorage)
+      localStorage.setItem('unsavedData', JSON.stringify(watch()));
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [watch()]);
+
+  useEffect(() => {
+    // On mount, check for unsaved data
+    const unsavedData = localStorage.getItem('unsavedData');
+    if (unsavedData) {
+      const parsedData = JSON.parse(unsavedData);
+      reset(parsedData);
+
+      if (parsedData.tags) {
+        setTags(parsedData.tags.split(','));
+      }
+    }
+  }, [reset]);
+
   const access_level = watch('access_level');
 
   const handleAddTag = () => {
@@ -122,7 +150,6 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
   };
 
   console.log('form errors', errors);
-  console.log(watch('flashcards'));
 
   return (
     <div className="">
