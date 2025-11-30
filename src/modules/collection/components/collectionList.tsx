@@ -18,6 +18,8 @@ import type { CollectionType } from '../types/collection';
 import DeleteCollectionModal from './deleteCollectionModal';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Label } from '@/components/ui/label';
+import { useMutationWithToast } from '@/shared/hooks/useMutationWithToast';
+import { favoriteCollection } from '../services/collection.services';
 
 type CollectionListProps = {
   collections: CollectionType[];
@@ -28,6 +30,14 @@ const CollectionList = ({ collections, readOnly = false }: CollectionListProps) 
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const navigate = useNavigate();
+
+  const { mutate } = useMutationWithToast(
+    ({ favorite, id }: { id: number; favorite: boolean }) => favoriteCollection(id, favorite),
+    {
+      success: 'Collection favorited',
+      error: 'Failed to favorite collection',
+    },
+  );
 
   const getStatusIcon = (status: CollectionType['access_level']) => {
     switch (status) {
@@ -149,7 +159,20 @@ const CollectionList = ({ collections, readOnly = false }: CollectionListProps) 
                 >
                   <Eye className="w-4 h-4 " />
                 </Button>
-                <Button variant="outline" size="sm" className="flex-1 py-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                  className={`flex-1 py-2 ${
+                    collection.is_favorited ? 'bg-red-500/10 text-red-500' : ''
+                  }`}
+                  onClick={() => {
+                    mutate(
+                      { id: collection.id, favorite: !collection.is_favorited },
+                      { onSuccess: () => {} },
+                    );
+                  }}
+                >
                   <HeartIcon className="w-4 h-4 " />
                 </Button>
               </div>

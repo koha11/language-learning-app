@@ -46,3 +46,8 @@ export const deleteCollection = async (id: number) => {
   const { data } = await httpClient.delete(`/collections/${id}`);
   return data;
 };
+
+export const favoriteCollection = async (id: number, favorite: boolean) => {
+  const { data } = await httpClient.post(`/collections/${id}/favorite`, { favorite });
+  return data;
+};
