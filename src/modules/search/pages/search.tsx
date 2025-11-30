@@ -57,7 +57,8 @@ const Search = () => {
             <SelectContent>
               <SelectItem value="latest">Latest</SelectItem>
               <SelectItem value="oldest">Oldest</SelectItem>
-              <SelectItem value="favorited">Favorited</SelectItem>
+              <SelectItem value="favorite">Favorite</SelectItem>
+              <SelectItem value="view">View</SelectItem>
               <SelectItem value="terms">Terms</SelectItem>
             </SelectContent>
           </Select>
