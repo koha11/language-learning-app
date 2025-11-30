@@ -7,6 +7,7 @@ export const collectionSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   description: z.string().max(200),
   tags: z.string(),
+  is_favorited: z.boolean(),
   owner: userSchema,
   access_level: z.enum(['private', 'public', 'shared']),
   flashcards_count: z.number(),

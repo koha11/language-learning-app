@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { getCollectionById, getCollections } from '../services/collection.services';
 
-export const useGetCollections = () => {
+export const useGetCollections = (
+  type?: 'public' | 'shared with me' | 'favorited' | 'recently',
+) => {
   return useQuery({
-    queryKey: ['collections'],
-    queryFn: getCollections,
+    queryKey: ['collections', type],
+    queryFn: () => getCollections(type),
   });
 };
 

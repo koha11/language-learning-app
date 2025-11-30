@@ -7,8 +7,12 @@ import type {
   FormParagraphType,
 } from '../types/collection';
 
-export const getCollections = async () => {
-  const { data } = await httpClient.get<CollectionType[]>('/collections');
+export const getCollections = async (
+  type?: 'public' | 'shared with me' | 'favorited' | 'recently',
+) => {
+  const { data } = await httpClient.get<CollectionType[]>(
+    `/collections${type ? `?type=${type}` : ''}`,
+  );
 
   return data;
 };
@@ -40,5 +44,10 @@ export const autoGenFlashcards = async (payload: AutoGenFlashcardsType) => {
 
 export const deleteCollection = async (id: number) => {
   const { data } = await httpClient.delete(`/collections/${id}`);
+  return data;
+};
+
+export const favoriteCollection = async (id: number, favorite: boolean) => {
+  const { data } = await httpClient.post(`/collections/${id}/favorite`, { favorite });
   return data;
 };

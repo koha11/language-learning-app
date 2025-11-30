@@ -18,7 +18,6 @@ import { loginSchema } from '../schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutationWithToast } from '@/shared/hooks/useMutationWithToast';
 import { Login } from '@/modules/auth/services/auth.services';
-import { email } from 'zod';
 const LoginPage = () => {
   const navigate = useNavigate();
   const { mutate, isPending } = useMutationWithToast(Login, {
