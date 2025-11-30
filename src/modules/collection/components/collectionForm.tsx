@@ -38,8 +38,6 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
   const [openAutoGenModal, setOpenAutoGenModal] = React.useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
-  const [sharedWith, setSharedWith] = useState<string[]>([]);
-  const [emailInput, setEmailInput] = useState('');
 
   const form = useForm<FormCollectionType>({
     resolver: zodResolver(formCollectionSchema),
@@ -104,7 +102,7 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [watch()]);
+  }, [watch]);
 
   useEffect(() => {
     // On mount, check for unsaved data
