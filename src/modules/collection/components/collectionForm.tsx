@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { X, Plus, UploadIcon, SparklesIcon } from 'lucide-react';
+import { X, Plus, UploadIcon, SparklesIcon, ArrowLeft } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import ImportFlashcardModal from './importFlashcardModal';
 import { formCollectionSchema } from '../schemas/collection.schema';
@@ -151,6 +151,10 @@ const CollectionForm = ({ onSubmit, initialData, isEditing, isPending }: Collect
 
   return (
     <div className="">
+      <Button type="button" variant="ghost" onClick={() => navigate(-1)} className="mb-4">
+        <ArrowLeft className="size-5" />
+        Back
+      </Button>
       <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-foreground">
