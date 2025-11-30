@@ -7,7 +7,9 @@ import { useGetCollections } from '../hooks/collection.hooks';
 import CollectionSkeleton from '../components/collectionSkeleton';
 
 const Collections = () => {
-  const { data, isLoading, isError } = useGetCollections();
+  const { data, isLoading } = useGetCollections();
+
+  const { data: recentlyCollections, isLoading: isLoadingRecently } = useGetCollections('recently');
 
   return (
     <div className="min-h-screen bg-background">
@@ -83,6 +85,19 @@ const Collections = () => {
           ) : (
             <CollectionList collections={data!} />
           )}
+
+          <div className="space-y-2">
+            <div className="font-bold text-xl">Recently Collections</div>
+            {isLoadingRecently ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <CollectionSkeleton key={i} />
+                ))}
+              </div>
+            ) : (
+              <CollectionList collections={recentlyCollections!} />
+            )}
+          </div>
         </div>
       </div>
     </div>
