@@ -53,7 +53,7 @@ const CollectionDetail = () => {
                     <p className="text-muted-foreground mt-1">{data?.description}</p>
                     <div className="flex flex-wrap gap-2 mt-3">
                       {data?.tags ? (
-                        data.tags.split(' ').map((tag) => (
+                        data.tags.split(',').map((tag) => (
                           <span
                             key={tag}
                             className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
@@ -90,7 +90,7 @@ const CollectionDetail = () => {
                   </div>
                 </div>
                 <div className="my-6">
-                  <FlashcardPractice flashcards={data?.flashcards ?? []} />
+                  <FlashcardPractice flashcards={data?.flashcards ?? []} isOwner={isOwner} />
                 </div>
                 <FlashcardList flashcards={data?.flashcards ?? []} />
               </>

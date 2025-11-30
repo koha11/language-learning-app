@@ -17,12 +17,15 @@ import type { FlashcardType } from '../types/flashcard';
 import { textToSpeech } from '@/shared/utils/textToSpeech';
 import EditFlashcardModal from './editFlashcardModal';
 import { shuffleArray } from '@/shared/utils/shuffleArray';
+import { useLocation } from 'react-router-dom';
 
 type FlashcardPracticeProps = {
   flashcards: FlashcardType[];
+  isOwner: boolean;
 };
 
-const FlashcardPractice = ({ flashcards }: FlashcardPracticeProps) => {
+const FlashcardPractice = ({ flashcards, isOwner }: FlashcardPracticeProps) => {
+  const { pathname } = useLocation();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [isFlipped, setIsFlipped] = React.useState(false);
   const [direction, setDirection] = React.useState(0);
@@ -143,9 +146,14 @@ const FlashcardPractice = ({ flashcards }: FlashcardPracticeProps) => {
             >
               <div className="" style={{ backfaceVisibility: 'hidden' }}>
                 <div className="flex items-center justify-end gap-3 px-6 py-2 ">
-                  <button className=" hover:cursor-pointer relative z-50">
-                    <Edit2Icon className="size-5 text-muted-foreground hover:text-black/80" />
-                  </button>
+                  {isOwner && (
+                    <button
+                      onClick={() => setEditCard(currentCard)}
+                      className=" hover:cursor-pointer relative z-50"
+                    >
+                      <Edit2Icon className="size-5 text-muted-foreground hover:text-black/80" />
+                    </button>
+                  )}
                   <button
                     className=" hover:cursor-pointer relative z-50"
                     onClick={() => {
@@ -171,9 +179,14 @@ const FlashcardPractice = ({ flashcards }: FlashcardPracticeProps) => {
                 }}
               >
                 <div className="flex items-center justify-end gap-3 px-6 pt-9 ">
-                  <button className=" hover:cursor-pointer relative z-50">
-                    <Edit2Icon className="size-5 text-muted-foreground hover:text-black/80" />
-                  </button>
+                  {isOwner && (
+                    <button
+                      onClick={() => setEditCard(currentCard)}
+                      className=" hover:cursor-pointer relative z-50"
+                    >
+                      <Edit2Icon className="size-5 text-muted-foreground hover:text-black/80" />
+                    </button>
+                  )}
                 </div>
                 <div className="flex items-center flex-1 justify-center p-10 pt-0">
                   <div className="text-center space-y-4">
@@ -238,8 +251,9 @@ const FlashcardPractice = ({ flashcards }: FlashcardPracticeProps) => {
           </Button>
         </div>
       </div>
-
-      <EditFlashcardModal open={!!editCard} onChange={() => setEditCard(null)} card={editCard} />
+      {isOwner && (
+        <EditFlashcardModal open={!!editCard} onChange={() => setEditCard(null)} card={editCard} />
+      )}
     </div>
   );
 };

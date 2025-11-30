@@ -3,9 +3,9 @@ import { searchCollections } from './search.services';
 
 export const useSearch = (query?: {
   q?: string;
-  term_min?: number;
-  term_max?: number;
-  sort?: 'favorited' | 'played' | 'latest';
+  numberOfTerms?: string;
+  page?: number;
+  sort?: string;
 }) => {
   return useQuery({
     queryKey: ['search', query],

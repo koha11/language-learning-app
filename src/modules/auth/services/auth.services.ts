@@ -16,5 +16,8 @@ export const CheckEmail = async (payload: { email: string }) => {
 };
 export const VerifyEmail = async (payload: { token: string }) => {
   const { data } = await httpClient.post<LoginResponse>('/auth/email/verify', payload);
+
+export const Logout = async () => {
+  const { data } = await httpClient.post('/auth/logout');
   return data;
 };

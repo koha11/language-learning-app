@@ -1,6 +1,6 @@
 import { BookOpen, LogOut, PlusIcon, SearchIcon, Settings, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/shared/hooks/useAuth';
@@ -10,20 +10,50 @@ import { Label } from '@/components/ui/label';
 import { useTheme } from '@/shared/hooks/useTheme';
 import Loading from '@/components/ui/loading';
 import React from 'react';
+import { useMutationWithToast } from '@/shared/hooks/useMutationWithToast';
+import { Logout } from '@/modules/auth/services/auth.services';
+import { useQueryClient } from '@tanstack/react-query';
 
 const Header = () => {
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [search, setSearch] = React.useState('');
+  const [searchValue, setSearchValue] = React.useState('');
   const { user, isLoading } = useAuth();
   const { theme, setTheme } = useTheme();
-
+  const { mutate, isPending } = useMutationWithToast(Logout, {
+    invalidateKeys: ['me'],
+    success: 'Logout success',
+    error: 'Logout failed',
+  });
+  const q = searchParams.get('q') ?? '';
   const isActive = (path: string) => {
     return location.pathname === path;
   };
+
+  React.useEffect(() => {
+    setSearchValue(q);
+  }, [q]);
+
+  const handleLogout = () => {
+    mutate(null, {
+      onSuccess: () => {
+        localStorage.removeItem('token');
+        queryClient.removeQueries({ queryKey: ['me'] });
+        navigate('/login', {
+          replace: true,
+        });
+      },
+    });
+  };
+
   const handleSearch = () => {
-    if (!search.trim()) return;
-    navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+    if (!searchValue.trim()) return;
+    setSearchParams({
+      q: q,
+    });
+    navigate(`/search?q=${encodeURIComponent(searchValue.trim())}`);
   };
   if (isLoading) {
     return <Loading />;
@@ -48,8 +78,8 @@ const Header = () => {
               <Input
                 className="rounded-full w-full pl-9 bg-gray-100"
                 placeholder="Search for flashcard collections"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     handleSearch();
@@ -124,7 +154,8 @@ const Header = () => {
                 </div>
 
                 <button
-                  onClick={() => console.log('Logout')}
+                  disabled={isPending}
+                  onClick={handleLogout}
                   className="flex items-center gap-2 w-full px-3 py-2 hover:bg-accent rounded-md text-red-500"
                 >
                   <LogOut className="size-5" />

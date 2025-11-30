@@ -159,7 +159,7 @@ const Quiz = () => {
                         key={q.id}
                         className={cn(
                           'p-3 rounded-lg flex items-center justify-between',
-                          answer.correct ? 'bg-green-100' : 'bg-destructive/10',
+                          answer.correct ? 'bg-green-100 dark:bg-green-300' : 'bg-destructive/10',
                         )}
                       >
                         <span className="text-sm text-foreground">Question {index + 1}</span>
@@ -220,11 +220,13 @@ const Quiz = () => {
                     disabled={showResult}
                     className={cn(
                       'w-full p-4 text-left rounded-lg cursor-pointer border-2 transition-all',
-                      'hover:bg-gray-100 ',
+                      'hover:bg-gray-100 dark:hover:bg-accent ',
                       'disabled:cursor-not-allowed',
                       isSelected && !showResult && 'border-primary bg-primary/5',
-                      showCorrectAnswer && 'border-green-500 bg-green-100 hover:bg-green-100',
-                      showIncorrectAnswer && 'border-red-500 bg-red-100 hover:bg-red-100',
+                      showCorrectAnswer &&
+                        'border-green-500 bg-green-100 dark:bg-green-400 dark:hover:bg-green-400 hover:bg-green-100',
+                      showIncorrectAnswer &&
+                        'border-red-500 bg-red-100 dark:bg-red-400 dark:hover:bg-red-400 hover:bg-red-100',
                       !isSelected && !showResult && 'border-border',
                     )}
                   >
