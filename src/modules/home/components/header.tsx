@@ -27,6 +27,8 @@ const Header = () => {
     success: 'Logout success',
     error: 'Logout failed',
   });
+
+  const nameSplit = user?.name?.split(' ');
   const q = searchParams.get('q') ?? '';
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -125,12 +127,12 @@ const Header = () => {
             </div>
           )}
 
-          {user && (
+          {user && nameSplit && (
             <Popover>
               <PopoverTrigger asChild>
                 <button className="flex items-center gap-2 cursor-pointer">
                   <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center">
-                    {user?.name?.[0] ?? 'U'}
+                    {nameSplit[nameSplit.length - 1][0]}
                   </div>
                 </button>
               </PopoverTrigger>
@@ -156,7 +158,7 @@ const Header = () => {
                 <button
                   disabled={isPending}
                   onClick={handleLogout}
-                  className="flex items-center gap-2 w-full px-3 py-2 hover:bg-accent rounded-md text-red-500"
+                  className="flex items-center gap-2 w-full px-3 py-2 hover:bg-accent rounded-md "
                 >
                   <LogOut className="size-5" />
                   <Label>Logout</Label>

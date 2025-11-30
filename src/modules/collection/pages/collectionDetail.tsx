@@ -21,6 +21,7 @@ const CollectionDetail = () => {
   const { data, isLoading, isError } = useGetCollectionById(Number(id!));
 
   const isOwner = canEditCollection(user, data!);
+  const nameSplit = user?.name?.split(' ');
   if (ild) {
     return <Loading />;
   }
@@ -50,9 +51,8 @@ const CollectionDetail = () => {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
                     <h1 className="text-3xl font-bold text-foreground">{data?.name}</h1>
-                    <p className="text-muted-foreground mt-1">{data?.description}</p>
                     <div className="flex flex-wrap gap-2 mt-3">
-                      {data?.tags ? (
+                      {data?.tags &&
                         data.tags.split(',').map((tag) => (
                           <span
                             key={tag}
@@ -60,10 +60,7 @@ const CollectionDetail = () => {
                           >
                             {tag}
                           </span>
-                        ))
-                      ) : (
-                        <span className="text-xs">No tags</span>
-                      )}
+                        ))}
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -92,6 +89,21 @@ const CollectionDetail = () => {
                 <div className="my-6">
                   <FlashcardPractice flashcards={data?.flashcards ?? []} isOwner={isOwner} />
                 </div>
+                {user && nameSplit && (
+                  <div className="mb-10 mt-4">
+                    <div className="flex items-center gap-2 ">
+                      <div className="size-12 rounded-full bg-primary text-white flex items-center justify-center">
+                        {nameSplit[nameSplit.length - 1][0]}
+                      </div>
+
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground">Created by</span>
+                        <span className="font-medium">{user.name}</span>
+                      </div>
+                    </div>
+                    <p className="text-[15px] mt-4">{data?.description}</p>
+                  </div>
+                )}
                 <FlashcardList flashcards={data?.flashcards ?? []} />
               </>
             )}
