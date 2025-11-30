@@ -37,7 +37,7 @@ const CollectionDetail = () => {
   const [addCard, setAddCard] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const { user, isLoading: ild } = useAuth();
-  const { data, isLoading } = useGetCollectionById(Number(id!));
+  const { data, isLoading } = useGetCollectionById(Number(id!), user?.id);
   const queryClient = useQueryClient();
 
   const { mutate } = useMutationWithToast(
@@ -172,7 +172,7 @@ const CollectionDetail = () => {
                                 queryKey: ['collections', 'favorited'],
                               });
                               queryClient.invalidateQueries({ queryKey: ['collections'] });
-                              queryClient.invalidateQueries({ queryKey: ['collections', data.id] });
+                              // queryClient.invalidateQueries({ queryKey: ['collections', data.id] });
                             },
                           },
                         );
