@@ -11,6 +11,7 @@ import {
   Ellipsis,
   EyeIcon,
   DotIcon,
+  Copy,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +19,7 @@ import type { CollectionType } from '../types/collection';
 import DeleteCollectionModal from './deleteCollectionModal';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Label } from '@/components/ui/label';
+import { useCopyToClipboard } from '@/shared/hooks/useCopyToClipboard';
 import { useMutationWithToast } from '@/shared/hooks/useMutationWithToast';
 import { favoriteCollection } from '../services/collection.services';
 import { useQueryClient } from '@tanstack/react-query';
@@ -29,7 +31,7 @@ type CollectionListProps = {
 
 const CollectionList = ({ collections, readOnly = false }: CollectionListProps) => {
   const [deleteId, setDeleteId] = useState<number | null>(null);
-
+  const { copyToClipboard } = useCopyToClipboard();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -46,7 +48,7 @@ const CollectionList = ({ collections, readOnly = false }: CollectionListProps) 
       case 'public':
         return <Globe className="w-4 h-4 text-primary" />;
       case 'shared':
-        return <Users className="w-4 h-4 text-accent" />;
+        return <Users className="w-4 h-4 text-primary" />;
       case 'private':
         return <Lock className="w-4 h-4 text-muted-foreground" />;
     }
@@ -86,7 +88,7 @@ const CollectionList = ({ collections, readOnly = false }: CollectionListProps) 
                       <Ellipsis className="size-5" />
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className=" p-2 flex flex-col w-[120px]   gap-1">
+                  <PopoverContent className=" p-2 flex flex-col w-fit   gap-1">
                     <Button
                       variant="ghost"
                       size="sm"
@@ -95,6 +97,15 @@ const CollectionList = ({ collections, readOnly = false }: CollectionListProps) 
                     >
                       <Pencil className="size-4" />
                       <Label>Edit</Label>
+                    </Button>
+                    <Button
+                      onClick={() => copyToClipboard(window.location.href)}
+                      className="w-full flex items-center justify-start"
+                      variant="ghost"
+                      size="default"
+                    >
+                      <Copy className="w-5 h-5" />
+                      <Label>Coppy link</Label>
                     </Button>
                     <Button
                       variant="ghost"

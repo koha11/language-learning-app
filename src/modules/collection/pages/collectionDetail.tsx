@@ -1,7 +1,17 @@
 import { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Plus, Play, ShareIcon, HeartIcon } from 'lucide-react';
+import {
+  ArrowLeft,
+  Plus,
+  Play,
+  Ellipsis,
+  Pencil,
+  Trash2,
+  Copy,
+  ShareIcon,
+  HeartIcon,
+} from 'lucide-react';
 import FlashcardPractice from '@/modules/flashcard/components/flashcardPractice';
 import FlashcardList from '@/modules/flashcard/components/flashcardList';
 import { useGetCollectionById } from '../hooks/collection.hooks';
@@ -15,11 +25,17 @@ import { canEditCollection } from '@/shared/utils/permission';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMutationWithToast } from '@/shared/hooks/useMutationWithToast';
 import { favoriteCollection } from '../services/collection.services';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Label } from '@/components/ui/label';
+import DeleteCollectionModal from '../components/deleteCollectionModal';
+import { useCopyToClipboard } from '@/shared/hooks/useCopyToClipboard';
 
 const CollectionDetail = () => {
   const { id } = useParams();
+
   const navigate = useNavigate();
   const [addCard, setAddCard] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
   const { user, isLoading: ild } = useAuth();
   const { data, isLoading } = useGetCollectionById(Number(id!));
   const queryClient = useQueryClient();
@@ -32,8 +48,10 @@ const CollectionDetail = () => {
     },
   );
 
+  const { copyToClipboard } = useCopyToClipboard();
   const isOwner = canEditCollection(user, data!);
   const nameSplit = user?.name?.split(' ');
+
   if (ild) {
     return <Loading />;
   }
@@ -88,10 +106,47 @@ const CollectionDetail = () => {
                     </Button>
 
                     {isOwner && (
-                      <Button onClick={() => setAddCard(true)} size="lg">
-                        <Plus className="w-5 h-5 mr-2" />
-                        Add Card
-                      </Button>
+                      <div className="flex items-center gap-4">
+                        <Button onClick={() => setAddCard(true)} size="lg">
+                          <Plus className="w-5 h-5 mr-2" />
+                          Add Card
+                        </Button>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <button className=" hover:cursor-pointer">
+                              <Ellipsis className="size-5" />
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent className=" p-2 flex flex-col w-fit   gap-1">
+                            <Button
+                              variant="ghost"
+                              size="default"
+                              className="w-full flex items-center justify-start"
+                              onClick={() => navigate(`/collections/${id}/edit`)}
+                            >
+                              <Pencil className="size-4" />
+                              <Label>Edit</Label>
+                            </Button>
+                            <Button
+                              onClick={() => copyToClipboard(window.location.href)}
+                              className="w-full flex items-center justify-start"
+                              variant="ghost"
+                              size="default"
+                            >
+                              <Copy className="w-5 h-5" />
+                              <Label>Coppy link</Label>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="default"
+                              className="w-full flex items-center justify-start text-red-500 hover:text-red-500"
+                              onClick={() => setDeleteId(Number(id))}
+                            >
+                              <Trash2 className="size-4" /> <Label>Delete</Label>
+                            </Button>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
                     )}
                     <Button variant="outline" size="lg">
                       <ShareIcon className="w-5 h-5" />
@@ -151,7 +206,8 @@ const CollectionDetail = () => {
           </div>
         </div>
       </div>
-      <AddFlashcardModal open={addCard} onChange={() => setAddCard(false)} />
+      <AddFlashcardModal open={addCard} onChange={() => setAddCard(false)} />{' '}
+      <DeleteCollectionModal deleteId={deleteId} setDeleteId={setDeleteId} />
     </div>
   );
 };

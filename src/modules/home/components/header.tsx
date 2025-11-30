@@ -74,43 +74,23 @@ const Header = () => {
         <div className="flex-1 flex justify-center">
           {isLoading ? (
             <div className="w-[40%] h-10 bg-muted rounded-md animate-pulse"></div>
-          ) : !user ? (
-            <div className="relative w-[60%] max-w-lg">
-              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 opacity-60" />
-              <Input
-                className="rounded-full w-full pl-9 bg-gray-100"
-                placeholder="Search for flashcard collections"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSearch();
-                  }
-                }}
-              />
-            </div>
           ) : (
-            <nav className="flex items-center gap-10">
-              <Link
-                to="/collections"
-                className={cn(
-                  'text-foreground hover:text-primary transition-colors font-medium',
-                  isActive('/collections') && 'text-primary',
-                )}
-              >
-                Collections
-              </Link>
-
-              <Link
-                to="/progress"
-                className={cn(
-                  'text-foreground hover:text-primary transition-colors font-medium',
-                  isActive('/progress') && 'text-primary',
-                )}
-              >
-                Progress
-              </Link>
-            </nav>
+            <div className="flex items-center w-full justify-center">
+              <div className="relative w-[60%] max-w-lg">
+                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 opacity-60" />
+                <Input
+                  className="rounded-full w-full pl-9 bg-gray-100"
+                  placeholder="Search for flashcard collections"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch();
+                    }
+                  }}
+                />
+              </div>
+            </div>
           )}
         </div>
 
@@ -128,43 +108,56 @@ const Header = () => {
           )}
 
           {user && nameSplit && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="flex items-center gap-2 cursor-pointer">
-                  <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center">
-                    {nameSplit[nameSplit.length - 1][0]}
-                  </div>
-                </button>
-              </PopoverTrigger>
-
-              <PopoverContent className=" p-2" align="end">
-                <div className="px-2 py-2 border-b">
-                  <p className=" font-medium">{user?.name}</p>
-                  <p className="text-sm text-muted-foreground">{user?.email}</p>
-                </div>
-                <div className="flex items-center gap-2 p-2">
-                  <Switch
-                    id="theme-switch"
-                    checked={theme === 'dark'}
-                    onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-                  />
-                  <Label htmlFor="theme-switch">Dark Mode</Label>
-                </div>
-                <div className="flex items-center hover:bg-accent rounded-md gap-2 p-2">
-                  <Settings className="size-5" />
-                  <Label htmlFor="airplane-mode">Settings</Label>
-                </div>
-
-                <button
-                  disabled={isPending}
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 w-full px-3 py-2 hover:bg-accent rounded-md "
+            <div className="flex items-center gap-6">
+              <nav className="flex items-center ">
+                <Link
+                  to="/collections"
+                  className={cn(
+                    'text-foreground hover:text-primary transition-colors font-medium',
+                    isActive('/collections') && 'dark:text-primary text-blue-600',
+                  )}
                 >
-                  <LogOut className="size-5" />
-                  <Label>Logout</Label>
-                </button>
-              </PopoverContent>
-            </Popover>
+                  Collections
+                </Link>
+              </nav>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="flex items-center gap-2 cursor-pointer">
+                    <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center">
+                      {nameSplit[nameSplit.length - 1][0]}
+                    </div>
+                  </button>
+                </PopoverTrigger>
+
+                <PopoverContent className=" p-2" align="end">
+                  <div className="px-2 py-2 border-b">
+                    <p className=" font-medium">{user?.name}</p>
+                    <p className="text-sm text-muted-foreground">{user?.email}</p>
+                  </div>
+                  <div className="flex items-center gap-2 p-2">
+                    <Switch
+                      id="theme-switch"
+                      checked={theme === 'dark'}
+                      onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                    />
+                    <Label htmlFor="theme-switch">Dark Mode</Label>
+                  </div>
+                  <div className="flex items-center hover:bg-accent rounded-md gap-2 p-2">
+                    <Settings className="size-5" />
+                    <Label htmlFor="airplane-mode">Settings</Label>
+                  </div>
+
+                  <button
+                    disabled={isPending}
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 w-full px-3 py-2 hover:bg-accent rounded-md "
+                  >
+                    <LogOut className="size-5" />
+                    <Label>Logout</Label>
+                  </button>
+                </PopoverContent>
+              </Popover>
+            </div>
           )}
         </div>
       </div>
