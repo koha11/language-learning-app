@@ -18,7 +18,7 @@ const Collections = () => {
             <div>
               <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
                 <FolderOpen className="w-8 h-8 text-primary" />
-                My Collections
+                Collections
               </h1>
               <p className="text-muted-foreground mt-1">
                 Organize your flashcards into collections
@@ -73,7 +73,7 @@ const Collections = () => {
               )}
             </Card>
           </div>
-
+          <h3 className="text-2xl font-bold">My Collections</h3>
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {Array.from({ length: 10 }).map((_, i) => (
