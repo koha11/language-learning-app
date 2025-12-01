@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { BookOpen, Brain, Sparkles, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/shared/hooks/useAuth';
 import Loading from '@/components/ui/loading';
+import EditUserInfoModal from '@/modules/user/components/editUserInfoModal';
 
 const Home = () => {
   const { isLoading } = useAuth();
+
+  const [open, setOpen] = useState(false)
 
   if (isLoading) {
     return <Loading />;
@@ -120,6 +123,8 @@ const Home = () => {
           <p>© 2025 LinguaLearn.</p>
         </div>
       </footer>
+
+      <EditUserInfoModal open={open} onChange={() => setOpen(true)} />
     </div>
   );
 };
