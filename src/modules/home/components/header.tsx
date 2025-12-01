@@ -42,7 +42,7 @@ const Header = () => {
     mutate(null, {
       onSuccess: () => {
         localStorage.removeItem('token');
-        queryClient.removeQueries({ queryKey: ['me'] });
+        queryClient.clear();
         navigate('/login', {
           replace: true,
         });
@@ -61,11 +61,11 @@ const Header = () => {
     return <Loading />;
   }
   return (
-    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+    <header className="border-b border-border bg-background/95  sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* LEFT — Logo */}
         <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg  from-primary to-accent flex items-center justify-center">
             <BookOpen className="w-6 h-6 text-white" />
           </div>
           <span className="text-xl font-bold text-foreground">G-Flashcard</span>
@@ -97,12 +97,12 @@ const Header = () => {
         <div className="flex items-center gap-3">
           {!isLoading && !user && (
             <div className="flex items-center gap-6">
-              <Link to="/collections/create" className="flex items-center gap-1 text-blue-600">
+              <Link to="/collections/create" className="flex items-center gap-1 text-primary">
                 <PlusIcon className="size-4.5" />
                 <span className="text-[15px] font-medium">Create</span>
               </Link>
               <Link to="/login">
-                <Button className="rounded-full bg-blue-500 px-6  hover:bg-blue-500">Login</Button>
+                <Button className="rounded-full bg-primary px-6  ">Login</Button>
               </Link>
             </div>
           )}
