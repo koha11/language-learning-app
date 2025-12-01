@@ -137,14 +137,15 @@ const CollectionDetail = () => {
                         />
                       </Button>
                     )}
-                    {isOwner && (
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <button className=" hover:cursor-pointer">
-                            <Ellipsis className="size-5" />
-                          </button>
-                        </PopoverTrigger>
-                        <PopoverContent className=" p-2 flex flex-col w-fit   gap-1">
+
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button className=" hover:cursor-pointer">
+                          <Ellipsis className="size-5" />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className=" p-2 flex flex-col w-fit   gap-1">
+                        {isOwner && (
                           <Button
                             variant="ghost"
                             size="default"
@@ -154,15 +155,17 @@ const CollectionDetail = () => {
                             <Pencil className="size-4" />
                             <Label>Edit</Label>
                           </Button>
-                          <Button
-                            onClick={() => copyToClipboard(window.location.href)}
-                            className="w-full flex items-center justify-start"
-                            variant="ghost"
-                            size="default"
-                          >
-                            <Copy className="w-5 h-5" />
-                            <Label>Coppy link</Label>
-                          </Button>
+                        )}
+                        <Button
+                          onClick={() => copyToClipboard(window.location.href)}
+                          className="w-full flex items-center justify-start"
+                          variant="ghost"
+                          size="default"
+                        >
+                          <Copy className="w-5 h-5" />
+                          <Label>Coppy link</Label>
+                        </Button>
+                        {isOwner && (
                           <Button
                             variant="ghost"
                             size="default"
@@ -171,9 +174,9 @@ const CollectionDetail = () => {
                           >
                             <Trash2 className="size-4" /> <Label>Delete</Label>
                           </Button>
-                        </PopoverContent>
-                      </Popover>
-                    )}
+                        )}
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
                 <div className="my-6">
