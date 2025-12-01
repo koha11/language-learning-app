@@ -38,7 +38,7 @@ const Home = () => {
                   Start Learning
                 </Button>
               </Link>
-              <Link to="/quiz">
+              <Link to="/collections">
                 <Button size="lg" variant="outline" className="text-lg px-8 py-5">
                   Take a Quiz
                 </Button>
@@ -105,7 +105,7 @@ const Home = () => {
               Join thousands of learners mastering new languages every day with our proven flashcard
               system.
             </p>
-            <Link to="/collections/all">
+            <Link to="/collections">
               <Button size="lg" className="text-lg px-8">
                 Get Started Now
               </Button>
@@ -119,7 +119,6 @@ const Home = () => {
           <p>© 2025 G-Flashcard</p>
         </div>
       </footer>
-
     </div>
   );
 };
