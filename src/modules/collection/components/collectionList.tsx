@@ -180,20 +180,21 @@ const CollectionList = ({ collections, readOnly = false }: CollectionListProps) 
                   variant="outline"
                   size="sm"
                   type="button"
-                  className={`flex-1 py-2 ${collection.is_favorited ? 'bg-red-500/10 text-red-500' : ''
-                    }`}
+                  className={`flex-1 py-2 `}
                   onClick={() => {
                     mutate(
                       { id: collection.id, favorite: !collection.is_favorited },
                       {
-                        onSuccess: () => {
-
-                        },
+                        onSuccess: () => {},
                       },
                     );
                   }}
                 >
-                  <HeartIcon className="w-4 h-4 " />
+                  <HeartIcon
+                    className={`size-4 ${
+                      collection.is_favorited ? 'fill-red-500 text-red-500' : ''
+                    }`}
+                  />
                 </Button>
               </div>
             </div>
