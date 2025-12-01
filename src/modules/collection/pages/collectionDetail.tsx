@@ -159,17 +159,16 @@ const CollectionDetail = () => {
                       variant="outline"
                       size="lg"
                       type="button"
-                      className={`flex-1 py-2 ${data?.is_favorited ? 'bg-red-500/10 text-red-500' : ''
-                        }`}
+                      className={`flex-1 py-2 ${
+                        data?.is_favorited ? 'bg-red-500/10 text-red-500' : ''
+                      }`}
                       onClick={() => {
                         if (!data) return;
 
                         mutate(
                           { id: data.id, favorite: !data.is_favorited },
                           {
-                            onSuccess: () => {
-
-                            },
+                            onSuccess: () => {},
                           },
                         );
                       }}
@@ -181,16 +180,16 @@ const CollectionDetail = () => {
                 <div className="my-6">
                   <FlashcardPractice flashcards={data?.flashcards ?? []} isOwner={isOwner} />
                 </div>
-                {user && nameSplit && (
+                {data && (
                   <div className="mb-10 mt-4">
                     <div className="flex items-center gap-2 ">
                       <div className="size-12 rounded-full bg-primary text-white flex items-center justify-center">
-                        {nameSplit[nameSplit.length - 1][0]}
+                        {data.owner.name[0].toUpperCase()}
                       </div>
 
                       <div className="flex flex-col">
                         <span className="text-xs text-muted-foreground">Created by</span>
-                        <span className="font-medium">{user.name}</span>
+                        <span className="font-medium">{data.owner.name}</span>
                       </div>
                     </div>
                     <p className="text-[15px] mt-4">{data?.description}</p>

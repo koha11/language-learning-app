@@ -109,7 +109,7 @@ const CollectionList = ({ collections, readOnly = false }: CollectionListProps) 
                       size="default"
                     >
                       <Copy className="w-5 h-5" />
-                      <Label>Coppy link</Label>
+                      <Label>Copy link</Label>
                     </Button>
                     <Button
                       variant="ghost"
@@ -180,15 +180,14 @@ const CollectionList = ({ collections, readOnly = false }: CollectionListProps) 
                   variant="outline"
                   size="sm"
                   type="button"
-                  className={`flex-1 py-2 ${collection.is_favorited ? 'bg-red-500/10 text-red-500' : ''
-                    }`}
+                  className={`flex-1 py-2 ${
+                    collection.is_favorited ? 'bg-red-500/10 text-red-500' : ''
+                  }`}
                   onClick={() => {
                     mutate(
                       { id: collection.id, favorite: !collection.is_favorited },
                       {
-                        onSuccess: () => {
-
-                        },
+                        onSuccess: () => {},
                       },
                     );
                   }}
