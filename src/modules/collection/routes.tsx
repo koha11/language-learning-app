@@ -4,6 +4,7 @@ import CollectionDetail from './pages/collectionDetail';
 import EditCollection from './pages/editCollection';
 import AddCollection from './pages/addCollection';
 import ProtectedRoutes from '@/core/router/protectedRoutes';
+import PublicCollection from './pages/publicCollection';
 
 export const collectionRoutes = [
   {
@@ -12,6 +13,10 @@ export const collectionRoutes = [
       {
         path: '/collections/:id',
         element: <CollectionDetail />,
+      },
+      {
+        path: '/collections/all',
+        element: <PublicCollection />,
       },
     ],
   },

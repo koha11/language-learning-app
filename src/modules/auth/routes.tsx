@@ -1,3 +1,4 @@
+import ForgotPassword from './pages/forgotPassword';
 import LoginPage from './pages/login';
 import Signup from './pages/signup';
 import UnverifyEmailPage from './pages/unverifyEmail';
@@ -8,4 +9,5 @@ export const authRoutes = [
   { path: '/register', element: <Signup /> },
   { path: '/unverify-email', element: <UnverifyEmailPage /> },
   { path: '/verify-email', element: <VerifyEmailPage /> },
+  { path: '/forgot-password', element: <ForgotPassword /> },
 ];

@@ -102,6 +102,12 @@ const LoginPage = () => {
                 Sign up
               </Link>
             </p>
+            <hr />
+            <p className="text-sm text-muted-foreground text-center">
+              <Link to="/forgot-password" className="text-primary hover:underline">
+                Forgot password
+              </Link>
+            </p>
           </CardFooter>
         </form>
       </Card>

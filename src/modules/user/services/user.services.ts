@@ -1,6 +1,6 @@
 import { httpClient } from '@/core/htpp/httpClient';
 import type { UserResponse } from '../types/userResponse';
-import type { UserType } from '../types/user';
+import type { UserInfoType, UserType } from '../types/user';
 
 export const getMe = async () => {
   const { data } = await httpClient.get<UserResponse>('/auth/me');
@@ -15,3 +15,8 @@ export const getUsersByEmail = async (email: string) => {
   });
   return data;
 };
+
+export const editUserInfo = async (payload: UserInfoType) => {
+  const res = await httpClient.post<UserResponse>('/auth/me', { payload });
+  return res.data;
+}

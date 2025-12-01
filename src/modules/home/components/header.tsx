@@ -68,7 +68,7 @@ const Header = () => {
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
             <BookOpen className="w-6 h-6 text-white" />
           </div>
-          <span className="text-xl font-bold text-foreground">LinguaLearn</span>
+          <span className="text-xl font-bold text-foreground">G-Flashcard</span>
         </Link>
 
         <div className="flex-1 flex justify-center">

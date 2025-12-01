@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { BookOpen, Brain, Sparkles, TrendingUp } from 'lucide-react';
@@ -53,7 +52,7 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Why Choose LinguaLearn?
+              Why Choose G-Flashcard?
             </h2>
             <p className="text-xl text-muted-foreground">
               Everything you need to master a new language
@@ -106,7 +105,7 @@ const Home = () => {
               Join thousands of learners mastering new languages every day with our proven flashcard
               system.
             </p>
-            <Link to="/flashcards">
+            <Link to="/collections/all">
               <Button size="lg" className="text-lg px-8">
                 Get Started Now
               </Button>
@@ -117,9 +116,10 @@ const Home = () => {
 
       <footer className="border-t border-border py-8">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© 2025 LinguaLearn.</p>
+          <p>© 2025 G-Flashcard</p>
         </div>
       </footer>
+
     </div>
   );
 };

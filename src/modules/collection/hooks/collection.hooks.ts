@@ -10,10 +10,10 @@ export const useGetCollections = (
   });
 };
 
-export const useGetCollectionById = (id: number) => {
+export const useGetCollectionById = (id: number, userId?: number) => {
   return useQuery({
     queryKey: ['collections', id],
-    queryFn: () => getCollectionById(id),
+    queryFn: () => getCollectionById(id, userId),
     enabled: !!id,
   });
 };

@@ -17,8 +17,10 @@ export const getCollections = async (
   return data;
 };
 
-export const getCollectionById = async (id: number) => {
-  const { data } = await httpClient.get<CollectionDetailType>(`/collections/${id}`);
+export const getCollectionById = async (id: number, userId?: number) => {
+  const { data } = await httpClient.get<CollectionDetailType>(
+    `/collections/${id}?${userId ? `user_id=${userId}` : ''}`,
+  );
   return data;
 };
 
