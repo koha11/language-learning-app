@@ -109,7 +109,7 @@ const CollectionList = ({ collections, readOnly = false }: CollectionListProps) 
                       size="default"
                     >
                       <Copy className="w-5 h-5" />
-                      <Label>Coppy link</Label>
+                      <Label>Copy link</Label>
                     </Button>
                     <Button
                       variant="ghost"

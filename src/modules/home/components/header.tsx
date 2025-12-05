@@ -1,4 +1,4 @@
-import { BookOpen, LogOut, PlusIcon, SearchIcon, Settings, User } from 'lucide-react';
+import { BookOpen, LogOut, PlusIcon, SearchIcon, Settings, User, User2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -9,10 +9,12 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useTheme } from '@/shared/hooks/useTheme';
 import Loading from '@/components/ui/loading';
-import React from 'react';
+import React, { useState } from 'react';
 import { useMutationWithToast } from '@/shared/hooks/useMutationWithToast';
-import { Logout } from '@/modules/auth/services/auth.services';
+import { ChangePassword, Logout } from '@/modules/auth/services/auth.services';
 import { useQueryClient } from '@tanstack/react-query';
+import EditUserInfoModal from '@/modules/user/components/editUserInfoModal';
+import ChangePasswordModal from '@/modules/user/components/changePasswordModal';
 
 const Header = () => {
   const location = useLocation();
@@ -20,6 +22,8 @@ const Header = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = React.useState('');
+  const [isEditUserInfoModalOpen, setIsEditUserInfoModalOpen] = useState(false);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const { user, isLoading } = useAuth();
   const { theme, setTheme } = useTheme();
   const { mutate, isPending } = useMutationWithToast(Logout, {
@@ -57,9 +61,11 @@ const Header = () => {
     });
     navigate(`/search?q=${encodeURIComponent(searchValue.trim())}`);
   };
+
   if (isLoading) {
     return <Loading />;
   }
+
   return (
     <header className="border-b border-border bg-background/95  sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -142,10 +148,22 @@ const Header = () => {
                     />
                     <Label htmlFor="theme-switch">Dark Mode</Label>
                   </div>
-                  <div className="flex items-center hover:bg-accent rounded-md gap-2 p-2">
+
+                  <button
+                    className="flex items-center hover:bg-accent rounded-md gap-2 p-2"
+                    onClick={() => setIsEditUserInfoModalOpen(true)}
+                  >
+                    <User2Icon className="size-5" />
+                    <Label htmlFor="airplane-mode">Change User Info</Label>
+                  </button>
+
+                  <button
+                    className="flex items-center hover:bg-accent rounded-md gap-2 p-2"
+                    onClick={() => setIsChangePasswordModalOpen(true)}
+                  >
                     <Settings className="size-5" />
-                    <Label htmlFor="airplane-mode">Settings</Label>
-                  </div>
+                    <Label htmlFor="airplane-mode">Change Password</Label>
+                  </button>
 
                   <button
                     disabled={isPending}
@@ -161,6 +179,15 @@ const Header = () => {
           )}
         </div>
       </div>
+      <EditUserInfoModal
+        onChange={() => setIsEditUserInfoModalOpen(false)}
+        open={isEditUserInfoModalOpen}
+        initialData={{ name: user?.name ?? '', dob: user?.dob.substring(0, 10) ?? '' }}
+      />
+      <ChangePasswordModal
+        onChange={() => setIsChangePasswordModalOpen(false)}
+        open={isChangePasswordModalOpen}
+      />
     </header>
   );
 };

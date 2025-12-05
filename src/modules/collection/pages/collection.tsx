@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Plus, FolderOpen } from 'lucide-react';
+import { Plus, FolderOpen, Folder } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import CollectionList from '../components/collectionList';
 import { Link } from 'react-router-dom';
@@ -29,12 +29,20 @@ const Collections = () => {
                 Organize your flashcards into collections
               </p>
             </div>
-            <Link to={`/collections/create`}>
-              <Button size="lg">
-                <Plus className="w-5 h-5 mr-2" />
-                New Collection
-              </Button>
-            </Link>
+            <div className="space-x-4">
+              <Link to={`/collections/all`}>
+                <Button size="lg">
+                  <Folder className="w-5 h-5 mr-2" />
+                  View Public Collections
+                </Button>
+              </Link>
+              <Link to={`/collections/create`}>
+                <Button size="lg">
+                  <Plus className="w-5 h-5 mr-2" />
+                  New Collection
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* Stats */}

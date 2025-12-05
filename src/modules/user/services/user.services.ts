@@ -17,6 +17,6 @@ export const getUsersByEmail = async (email: string) => {
 };
 
 export const editUserInfo = async (payload: UserInfoType) => {
-  const res = await httpClient.post<UserResponse>('/auth/me', { payload });
+  const res = await httpClient.post<UserResponse>('/users/edit', payload);
   return res.data;
-}
+};
