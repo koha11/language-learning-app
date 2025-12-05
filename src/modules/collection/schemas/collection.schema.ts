@@ -13,8 +13,6 @@ export const collectionSchema = z.object({
   flashcards_count: z.number(),
   favorited_count: z.number(),
   viewed_count: z.number(),
-  deleted_at: z.string(),
-  created_at: z.string(),
 });
 
 export const formCollectionSchema = z.object({

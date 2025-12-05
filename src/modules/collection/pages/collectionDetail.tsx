@@ -186,7 +186,7 @@ const CollectionDetail = () => {
                   <div className="mb-10 mt-4">
                     <div className="flex items-center gap-2 ">
                       <div className="size-12 rounded-full bg-primary text-white flex items-center justify-center">
-                        {data.owner.name[0].toUpperCase()}
+                        {nameSplit && nameSplit[nameSplit?.length - 1][0].toUpperCase()}
                       </div>
 
                       <div className="flex flex-col">

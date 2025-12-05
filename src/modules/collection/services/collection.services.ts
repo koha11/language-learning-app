@@ -2,7 +2,6 @@ import { httpClient } from '@/core/htpp/httpClient';
 import type {
   AutoGenFlashcardsType,
   CollectionDetailType,
-  CollectionType,
   FormCollectionType,
   FormParagraphType,
 } from '../types/collection';
@@ -10,7 +9,7 @@ import type {
 export const getCollections = async (
   type?: 'public' | 'shared with me' | 'favorited' | 'recently',
 ) => {
-  const { data } = await httpClient.get<CollectionType[]>(
+  const { data } = await httpClient.get<CollectionDetailType[]>(
     `/collections${type ? `?type=${type}` : ''}`,
   );
 

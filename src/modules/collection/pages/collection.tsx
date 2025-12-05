@@ -5,10 +5,11 @@ import CollectionList from '../components/collectionList';
 import { Link } from 'react-router-dom';
 import { useGetCollections } from '../hooks/collection.hooks';
 import CollectionSkeleton from '../components/collectionSkeleton';
+import { useAuth } from '@/shared/hooks/useAuth';
 
 const Collections = () => {
   const { data, isLoading } = useGetCollections();
-
+  const { user, isLoading: ild } = useAuth();
   const { data: recentlyCollections, isLoading: isLoadingRecently } = useGetCollections('recently');
 
   const { data: favoritedCollections, isLoading: isLoadingFavorited } =
@@ -87,39 +88,39 @@ const Collections = () => {
             </Card>
           </div>
           <h3 className="text-2xl font-bold">My Collections</h3>
-          {isLoading ? (
+          {isLoading || ild ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {Array.from({ length: 10 }).map((_, i) => (
                 <CollectionSkeleton key={i} />
               ))}
             </div>
           ) : (
-            <CollectionList collections={data!} />
+            <CollectionList collections={data!} user={user!} />
           )}
 
           <div className="space-y-2">
             <div className="font-bold text-xl">Recently Collections</div>
-            {isLoadingRecently ? (
+            {isLoadingRecently || ild ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {Array.from({ length: 10 }).map((_, i) => (
                   <CollectionSkeleton key={i} />
                 ))}
               </div>
             ) : (
-              <CollectionList collections={recentlyCollections!} />
+              <CollectionList collections={recentlyCollections!} user={user!} />
             )}
           </div>
 
           <div className="space-y-2">
             <div className="font-bold text-xl">Favorited Collections</div>
-            {isLoadingFavorited ? (
+            {isLoadingFavorited || ild ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {Array.from({ length: 10 }).map((_, i) => (
                   <CollectionSkeleton key={i} />
                 ))}
               </div>
             ) : (
-              <CollectionList collections={favoritedCollections!} />
+              <CollectionList collections={favoritedCollections!} user={user!} />
             )}
           </div>
         </div>
